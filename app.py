@@ -50,11 +50,11 @@ selected = st.sidebar.selectbox(
 
 if selected == "All":
     
-st.markdown("""
-**About this tool:**  
-This application was developed as part of research on Turkey–Poland trade relations.  
-Data reflects officially reported trade flows from UN Comtrade.
-""")
+    st.markdown("""
+    **About this tool:**  
+    This application was developed as part of research on Turkey–Poland trade relations.  
+    Data reflects officially reported trade flows from UN Comtrade.
+    """)
 
 # ---- Define code variable if something is selected ----
 if selected != "All":
@@ -188,6 +188,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
