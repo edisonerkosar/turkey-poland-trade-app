@@ -20,6 +20,19 @@ df = load_data()
 
 st.sidebar.header("Filters")
 
+st.sidebar.markdown("""
+**Data Source:**  
+UN Comtrade Database  
+https://comtradeplus.un.org/
+""")
+
+st.markdown("""
+**About this tool:**  
+This application was developed as part of research on Turkey–Poland trade relations.  
+Data reflects officially reported trade flows from UN Comtrade.
+""")
+
+
 direction = st.sidebar.selectbox(
     "Trade Direction",
     ["Turkey to Poland", "Poland to Turkey"]
@@ -159,5 +172,18 @@ if selected != "All":
         desc = "No official description available in dataset"
 
     st.write(f"**{code}** – {desc}")
+
+st.markdown("---")
+
+st.markdown("""
+### Data Source
+
+All trade data used in this application originates from the **United Nations Comtrade Database**.
+
+Source: UN Comtrade – International Trade Statistics  
+https://comtradeplus.un.org/
+
+Data has been processed and harmonized by the author for analytical and visualization purposes.
+""")
 
 
