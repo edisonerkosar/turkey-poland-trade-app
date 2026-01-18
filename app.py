@@ -6,7 +6,7 @@ st.title("Turkey → Poland Trade Explorer (2013–2024)")
 
 @st.cache_data
 def load_data():
-    return pd.read_excel("trade_master_all_levels.xlsx")
+    return pd.read_excel("TR_to_PL_Streamlit_Ready.xlsx")
 
 df = load_data()
 
@@ -41,4 +41,5 @@ fig = px.line(
 st.plotly_chart(fig)
 
 st.write("Total Value Displayed:", grouped["Final_FOB_Value"].sum())
+
 
