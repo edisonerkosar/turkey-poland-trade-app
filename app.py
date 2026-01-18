@@ -2,7 +2,9 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-st.title("Turkey–Poland Bilateral Trade Explorer (2013–2024)")
+st.set_page_config(layout="wide")
+
+st.title("Turkey–Poland Trade Explorer (2013–2024)")
 
 @st.cache_data
 def load_data():
@@ -10,56 +12,97 @@ def load_data():
 
 df = load_data()
 
-st.sidebar.header("Search Options")
+st.sidebar.header("Filters")
 
+# Direction selector
 direction = st.sidebar.selectbox(
     "Trade Direction",
     ["Turkey_to_Poland", "Poland_to_Turkey"]
 )
 
+data = df[df["Direction"] == direction]
+
+# Level selector
 level = st.sidebar.selectbox(
     "Aggregation Level",
     ["HS6", "HS4", "HS2"]
 )
 
-search_code = st.sidebar.text_input("Search by HS code")
+# Autocomplete dropdowns
+if level == "HS6":
+    options = data[["HS6", "HS_Description"]].drop_duplicates()
+    display = options["HS6"] + " – " + options["HS_Description"]
+elif level == "HS4":
+    options = data[["HS4", "HS4_Description"]].drop_duplicates()
+    display = options["HS4"] + " – " + options["HS4_Description"]
+else:
+    options = data[["HS2", "HS2_Description"]].drop_duplicates()
+    display = options["HS2"] + " – " + options["HS2_Description"]
 
-search_desc = st.sidebar.text_input("Search by description")
+selected = st.sidebar.selectbox(
+    "Search by Code or Description",
+    ["All"] + list(display)
+)
 
-data = df[df["Direction"] == direction]
+# Filter based on selection
+if selected != "All":
+    code = selected.split(" – ")[0]
+    data = data[data[level] == code]
 
-# Apply filters
-if search_code:
-    data = data[data[level].astype(str).str.startswith(search_code)]
+# ----- DEFAULT VIEW: TOP 10 FOR MOST RECENT YEAR -----
+latest_year = data["Year"].max()
 
-if search_desc:
-    data = data[data["HS_Description"].str.contains(search_desc, case=False, na=False)]
+default = data[data["Year"] == latest_year]
+top10 = (
+    default.groupby(level, as_index=False)["Final_FOB_Value"]
+    .sum()
+    .sort_values("Final_FOB_Value", ascending=False)
+    .head(10)
+)
 
-# Show selected descriptions
-if not data.empty:
-    st.subheader("Selected Codes and Descriptions")
+st.subheader(f"Top 10 {level} Categories in {latest_year}")
 
-    if level == "HS6":
-        desc = data[["HS6", "HS_Description"]].drop_duplicates()
-    elif level == "HS4":
-        desc = data[["HS4", "HS4_Description"]].drop_duplicates()
-    else:
-        desc = data[["HS2", "HS2_Description"]].drop_duplicates()
+fig_default = px.bar(
+    top10,
+    x=level,
+    y="Final_FOB_Value",
+    title="Top 10 Products by FOB Value",
+    text_auto=True
+)
 
-    st.write(desc)
+st.plotly_chart(fig_default, use_container_width=True)
+
+# ----- TIME SERIES GRAPH -----
 
 grouped = data.groupby(["Year", level], as_index=False)["Final_FOB_Value"].sum()
 
-st.write("Filtered Data Preview", grouped.head(20))
+st.subheader("Trade Over Time")
 
 fig = px.line(
     grouped,
     x="Year",
     y="Final_FOB_Value",
     color=level,
-    title=f"{direction.replace('_',' ')} – by {level}"
+    title="Time Series of Trade Value"
 )
 
-st.plotly_chart(fig)
+st.plotly_chart(fig, use_container_width=True)
 
-st.write("Total Value Displayed:", grouped["Final_FOB_Value"].sum())
+# ----- SHOW DESCRIPTION OF CURRENT SELECTION -----
+
+if selected != "All":
+    st.subheader("Selected Code Description")
+
+    if level == "HS6":
+        desc = options[options["HS6"] == code]["HS_Description"].values[0]
+    elif level == "HS4":
+        desc = options[options["HS4"] == code]["HS4_Description"].values[0]
+    else:
+        desc = options[options["HS2"] == code]["HS2_Description"].values[0]
+
+    st.write(f"**{code}** – {desc}")
+
+# ----- SUMMARY -----
+
+st.sidebar.write("Total Value Displayed:")
+st.sidebar.write(f"{data['Final_FOB_Value'].sum():,.0f}")
