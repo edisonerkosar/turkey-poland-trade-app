@@ -99,7 +99,30 @@ if selected == "All":
 
 
 # ---- TIME SERIES GRAPH ----
+# Build a complete year range
+all_years = list(range(2013, 2025))
+
 grouped = data.groupby(["Year", level], as_index=False)["Final_FOB_Value"].sum()
+
+# Ensure all years appear even with zero values
+codes = grouped[level].unique()
+
+complete = []
+
+for c in codes:
+    subset = grouped[grouped[level] == c]
+
+    full = pd.DataFrame({
+        "Year": all_years,
+        level: c
+    })
+
+    merged = full.merge(subset, on=["Year", level], how="left")
+    merged["Final_FOB_Value"] = merged["Final_FOB_Value"].fillna(0)
+
+    complete.append(merged)
+
+grouped = pd.concat(complete, ignore_index=True)
 grouped = grouped.sort_values("Year")
 
 st.subheader("Trade Over Time")
@@ -118,8 +141,8 @@ fig.update_layout(
     xaxis=dict(
         showgrid=True,
         tickmode="array",
-        tickvals=sorted(grouped["Year"].unique()),
-        ticktext=[str(y) for y in sorted(grouped["Year"].unique())]
+        tickvals=all_years,
+        ticktext=[str(y) for y in all_years]
     )
 )
 
@@ -136,4 +159,5 @@ if selected != "All":
         desc = "No official description available in dataset"
 
     st.write(f"**{code}** – {desc}")
+
 
