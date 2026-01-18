@@ -6,7 +6,7 @@ st.title("Turkey–Poland Bilateral Trade Explorer (2013–2024)")
 
 @st.cache_data
 def load_data():
-    return pd.read_excel("Unified_Trade_Streamlit.xlsx")
+    return pd.read_excel("Unified_Trade_With_Descriptions.xlsx")
 
 df = load_data()
 
@@ -22,12 +22,31 @@ level = st.sidebar.selectbox(
     ["HS6", "HS4", "HS2"]
 )
 
-search = st.sidebar.text_input("Enter HS code (optional)")
+search_code = st.sidebar.text_input("Search by HS code")
+
+search_desc = st.sidebar.text_input("Search by description")
 
 data = df[df["Direction"] == direction]
 
-if search:
-    data = data[data[level].astype(str).str.startswith(search)]
+# Apply filters
+if search_code:
+    data = data[data[level].astype(str).str.startswith(search_code)]
+
+if search_desc:
+    data = data[data["HS_Description"].str.contains(search_desc, case=False, na=False)]
+
+# Show selected descriptions
+if not data.empty:
+    st.subheader("Selected Codes and Descriptions")
+
+    if level == "HS6":
+        desc = data[["HS6", "HS_Description"]].drop_duplicates()
+    elif level == "HS4":
+        desc = data[["HS4", "HS4_Description"]].drop_duplicates()
+    else:
+        desc = data[["HS2", "HS2_Description"]].drop_duplicates()
+
+    st.write(desc)
 
 grouped = data.groupby(["Year", level], as_index=False)["Final_FOB_Value"].sum()
 
