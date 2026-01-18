@@ -20,19 +20,6 @@ df = load_data()
 
 st.sidebar.header("Filters")
 
-st.sidebar.markdown("""
-**Data Source:**  
-UN Comtrade Database  
-https://comtradeplus.un.org/
-""")
-
-st.markdown("""
-**About this tool:**  
-This application was developed as part of research on Turkey–Poland trade relations.  
-Data reflects officially reported trade flows from UN Comtrade.
-""")
-
-
 direction = st.sidebar.selectbox(
     "Trade Direction",
     ["Turkey to Poland", "Poland to Turkey"]
@@ -60,6 +47,14 @@ selected = st.sidebar.selectbox(
     "Search by Code or Description",
     ["All"] + list(display)
 )
+
+if selected == "All":
+    
+st.markdown("""
+**About this tool:**  
+This application was developed as part of research on Turkey–Poland trade relations.  
+Data reflects officially reported trade flows from UN Comtrade.
+""")
 
 # ---- Define code variable if something is selected ----
 if selected != "All":
@@ -173,6 +168,14 @@ if selected != "All":
 
     st.write(f"**{code}** – {desc}")
 
+st.sidebar.markdown("---")
+
+st.sidebar.markdown("""
+**Data Source:**  
+UN Comtrade Database  
+https://comtradeplus.un.org/
+""")
+
 st.markdown("---")
 
 st.markdown("""
@@ -185,5 +188,6 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
