@@ -9,6 +9,11 @@ st.title("Turkey–Poland Trade Explorer (2013–2024)")
 @st.cache_data(ttl=3600)
 def load_data():
     df = pd.read_excel("Unified_Trade_CLEAN_v2.xlsx")
+
+    df["HS6"] = df["HS6"].astype(str).str.zfill(6)
+    df["HS4"] = df["HS4"].astype(str).str.zfill(4)
+    df["HS2"] = df["HS2"].astype(str).str.zfill(2)
+    
     return df
 
 df = load_data()
@@ -30,7 +35,7 @@ level = st.sidebar.selectbox(
 
 if level == "HS6":
     options = data[["HS6", "HS_Description"]].drop_duplicates()
-    display = options["HS6"] + " – " + options["HS_Description"]
+    display = options["HS6"].astype(str) + " – " + options["HS_Description"].astype(str)
 elif level == "HS4":
     options = data[["HS4", "HS4_Description"]].drop_duplicates()
     display = options["HS4"] + " – " + options["HS4_Description"]
@@ -194,6 +199,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
