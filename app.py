@@ -45,10 +45,10 @@ else:
 
 selected = st.sidebar.selectbox(
     "Search by Code or Description",
-    ["All"] + list(display)
+    ["Home"] + list(display)
 )
 
-if selected == "All":
+if selected == "Home":
     
     st.markdown("""
     **About this tool:**  
@@ -57,7 +57,7 @@ if selected == "All":
     """)
 
 # ---- Define code variable if something is selected ----
-if selected != "All":
+if selected != "Home":
     code = selected.split(" – ")[0]
     data = data[data[level] == code]
 
@@ -70,7 +70,7 @@ if data.empty:
 latest_year = data["Year"].max()
 
 # ---- TOP 10 BLOCK ----
-if selected == "All":
+if selected == "Home":
 
     default = data[data["Year"] == latest_year]
 
@@ -158,7 +158,7 @@ st.plotly_chart(fig, use_container_width=True)
 
 
 # ---- DESCRIPTION DISPLAY ----
-if selected != "All":
+if selected != "Home":
     st.subheader("Selected Code Description")
 
     desc = options[options[level] == code].iloc[0].iloc[1]
@@ -188,6 +188,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
