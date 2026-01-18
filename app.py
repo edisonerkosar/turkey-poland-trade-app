@@ -6,14 +6,9 @@ st.set_page_config(layout="wide")
 
 st.title("Turkey–Poland Trade Explorer (2013–2024)")
 
-@st.cache_data
+@st.cache_data(ttl=3600)
 def load_data():
     df = pd.read_excel("Unified_Trade_CLEAN_v2.xlsx")
-
-    df["HS6"] = df["HS6"].astype(str).str.zfill(6)
-    df["HS4"] = df["HS4"].astype(str).str.zfill(4)
-    df["HS2"] = df["HS2"].astype(str).str.zfill(2)
-
     return df
 
 df = load_data()
@@ -47,6 +42,8 @@ selected = st.sidebar.selectbox(
     "Search by Code or Description",
     ["Home"] + list(display)
 )
+if st.sidebar.button("Reset to Home"):
+    selected = "Home"
 
 if selected == "Home":
     
@@ -107,17 +104,29 @@ if selected == "Home":
 
 
 # ---- TIME SERIES GRAPH ----
-# Build a complete year range
+st.subheader("Trade Over Time")
+
 all_years = list(range(2013, 2025))
 
-grouped = data.groupby(["Year", level], as_index=False)["Final_FOB_Value"].sum()
+# On Home page – only show top 10 goods
+if selected == "Home":
 
-# Ensure all years appear even with zero values
-codes = grouped[level].unique()
+    # Use the same top10 list already calculated above
+    top_codes = list(top10[level])
 
+    data_top = data[data[level].isin(top_codes)]
+
+    grouped = data_top.groupby(["Year", level], as_index=False)["Final_FOB_Value"].sum()
+
+else:
+    # For a single selected code
+    grouped = data.groupby(["Year", level], as_index=False)["Final_FOB_Value"].sum()
+
+# Ensure all years appear
 complete = []
 
-for c in codes:
+for c in grouped[level].unique():
+
     subset = grouped[grouped[level] == c]
 
     full = pd.DataFrame({
@@ -132,8 +141,6 @@ for c in codes:
 
 grouped = pd.concat(complete, ignore_index=True)
 grouped = grouped.sort_values("Year")
-
-st.subheader("Trade Over Time")
 
 fig = px.line(
     grouped,
@@ -155,7 +162,6 @@ fig.update_layout(
 )
 
 st.plotly_chart(fig, use_container_width=True)
-
 
 # ---- DESCRIPTION DISPLAY ----
 if selected != "Home":
@@ -188,6 +194,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
