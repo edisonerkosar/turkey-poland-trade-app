@@ -48,6 +48,20 @@ selected = st.sidebar.selectbox(
     ["All"] + list(display)
 )
 
+# ---- Define code variable if something is selected ----
+if selected != "All":
+    code = selected.split(" – ")[0]
+    data = data[data[level] == code]
+
+# ---- Safety check ----
+if data.empty:
+    st.warning("No trade data available for the selected filters.")
+    st.stop()
+
+# ---- Define latest_year BEFORE top-10 block ----
+latest_year = data["Year"].max()
+
+# ---- TOP 10 BLOCK ----
 if selected == "All":
 
     default = data[data["Year"] == latest_year]
@@ -84,6 +98,7 @@ if selected == "All":
     st.plotly_chart(fig_default, use_container_width=True)
 
 
+# ---- TIME SERIES GRAPH ----
 grouped = data.groupby(["Year", level], as_index=False)["Final_FOB_Value"].sum()
 grouped = grouped.sort_values("Year")
 
@@ -105,6 +120,8 @@ fig.update_layout(
 
 st.plotly_chart(fig, use_container_width=True)
 
+
+# ---- DESCRIPTION DISPLAY ----
 if selected != "All":
     st.subheader("Selected Code Description")
 
@@ -114,4 +131,3 @@ if selected != "All":
         desc = "No official description available in dataset"
 
     st.write(f"**{code}** – {desc}")
-
