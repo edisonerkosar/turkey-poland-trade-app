@@ -8,7 +8,7 @@ st.title("Turkey–Poland Trade Explorer (2013–2024)")
 
 @st.cache_data
 def load_data():
-    df = pd.read_excel("Unified_Trade_CLEAN.xlsx")
+    df = pd.read_excel("Unified_Trade_CLEAN_v2.xlsx")
 
     df["HS6"] = df["HS6"].astype(str).str.zfill(6)
     df["HS4"] = df["HS4"].astype(str).str.zfill(4)
@@ -48,16 +48,6 @@ selected = st.sidebar.selectbox(
     ["All"] + list(display)
 )
 
-if selected != "All":
-    code = selected.split(" – ")[0]
-    data = data[data[level] == code]
-
-if data.empty:
-    st.warning("No trade data available for the selected filters.")
-    st.stop()
-
-latest_year = data["Year"].max()
-
 if selected == "All":
 
     default = data[data["Year"] == latest_year]
@@ -82,10 +72,17 @@ if selected == "All":
     fig_default.update_layout(
         xaxis_title="HS Code",
         yaxis_title="Trade Value (USD)",
+        xaxis=dict(
+            type="category",
+            tickmode="array",
+            tickvals=list(top10[level]),
+            ticktext=list(top10[level])
+        ),
         yaxis=dict(showgrid=True)
     )
 
     st.plotly_chart(fig_default, use_container_width=True)
+
 
 grouped = data.groupby(["Year", level], as_index=False)["Final_FOB_Value"].sum()
 grouped = grouped.sort_values("Year")
@@ -117,3 +114,4 @@ if selected != "All":
         desc = "No official description available in dataset"
 
     st.write(f"**{code}** – {desc}")
+
