@@ -10,7 +10,6 @@ st.title("Turkey–Poland Trade Explorer (2013–2024)")
 def load_data():
     df = pd.read_excel("Unified_Trade_CLEAN.xlsx")
 
-    # Guarantee string formatting
     df["HS6"] = df["HS6"].astype(str).str.zfill(6)
     df["HS4"] = df["HS4"].astype(str).str.zfill(4)
     df["HS2"] = df["HS2"].astype(str).str.zfill(2)
@@ -23,17 +22,17 @@ st.sidebar.header("Filters")
 
 direction = st.sidebar.selectbox(
     "Trade Direction",
-    ["Turkey_to_Poland", "Poland_to_Turkey"]
+    ["Turkey to Poland", "Poland to Turkey"]
 )
 
-data = df[df["Direction"] == direction]
+direction_key = direction.replace(" ", "_")
+data = df[df["Direction"] == direction_key]
 
 level = st.sidebar.selectbox(
     "Aggregation Level",
     ["HS6", "HS4", "HS2"]
 )
 
-# Build dropdown options
 if level == "HS6":
     options = data[["HS6", "HS_Description"]].drop_duplicates()
     display = options["HS6"] + " – " + options["HS_Description"]
@@ -60,6 +59,7 @@ if data.empty:
 latest_year = data["Year"].max()
 
 if selected == "All":
+
     default = data[data["Year"] == latest_year]
 
     top10 = (
@@ -75,13 +75,20 @@ if selected == "All":
         top10,
         x=level,
         y="Final_FOB_Value",
-        title="Top 10 Products by FOB Value",
-        text_auto=True
+        text_auto=True,
+        labels={"Final_FOB_Value": "Trade Value (USD)"}
+    )
+
+    fig_default.update_layout(
+        xaxis_title="HS Code",
+        yaxis_title="Trade Value (USD)",
+        yaxis=dict(showgrid=True)
     )
 
     st.plotly_chart(fig_default, use_container_width=True)
 
 grouped = data.groupby(["Year", level], as_index=False)["Final_FOB_Value"].sum()
+grouped = grouped.sort_values("Year")
 
 st.subheader("Trade Over Time")
 
@@ -90,7 +97,13 @@ fig = px.line(
     x="Year",
     y="Final_FOB_Value",
     color=level,
-    title="Time Series of Trade Value"
+    labels={"Final_FOB_Value": "Trade Value (USD)"}
+)
+
+fig.update_layout(
+    yaxis_title="Trade Value (USD)",
+    yaxis=dict(showgrid=True),
+    xaxis=dict(showgrid=True)
 )
 
 st.plotly_chart(fig, use_container_width=True)
@@ -98,11 +111,9 @@ st.plotly_chart(fig, use_container_width=True)
 if selected != "All":
     st.subheader("Selected Code Description")
 
-    if level == "HS6":
-        desc = options[options["HS6"] == code]["HS_Description"].values[0]
-    elif level == "HS4":
-        desc = options[options["HS4"] == code]["HS4_Description"].values[0]
-    else:
-        desc = options[options["HS2"] == code]["HS2_Description"].values[0]
+    desc = options[options[level] == code].iloc[0].iloc[1]
+
+    if desc == "Description not available":
+        desc = "No official description available in dataset"
 
     st.write(f"**{code}** – {desc}")
