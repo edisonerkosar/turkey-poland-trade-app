@@ -28,16 +28,18 @@ level = st.sidebar.selectbox(
     ["HS6", "HS4", "HS2"]
 )
 
-# Autocomplete dropdowns
+# Autocomplete dropdowns (type-safe)
 if level == "HS6":
     options = data[["HS6", "HS_Description"]].drop_duplicates()
-    display = options["HS6"] + " – " + options["HS_Description"]
+    display = options["HS6"].astype(str) + " – " + options["HS_Description"].astype(str)
+
 elif level == "HS4":
     options = data[["HS4", "HS4_Description"]].drop_duplicates()
-    display = options["HS4"] + " – " + options["HS4_Description"]
+    display = options["HS4"].astype(str) + " – " + options["HS4_Description"].astype(str)
+
 else:
     options = data[["HS2", "HS2_Description"]].drop_duplicates()
-    display = options["HS2"] + " – " + options["HS2_Description"]
+    display = options["HS2"].astype(str) + " – " + options["HS2_Description"].astype(str)
 
 selected = st.sidebar.selectbox(
     "Search by Code or Description",
@@ -106,3 +108,4 @@ if selected != "All":
 
 st.sidebar.write("Total Value Displayed:")
 st.sidebar.write(f"{data['Final_FOB_Value'].sum():,.0f}")
+
