@@ -51,28 +51,37 @@ if selected != "All":
     code = selected.split(" – ")[0]
     data = data[data[level] == code]
 
-# ----- DEFAULT VIEW: TOP 10 FOR MOST RECENT YEAR -----
+# Check if any data exists after filtering
+if data.empty:
+    st.warning("No trade data available for the selected filters.")
+    st.stop()
+
 latest_year = data["Year"].max()
 
-default = data[data["Year"] == latest_year]
-top10 = (
-    default.groupby(level, as_index=False)["Final_FOB_Value"]
-    .sum()
-    .sort_values("Final_FOB_Value", ascending=False)
-    .head(10)
-)
+# Show Top 10 ONLY when no specific code is selected
+if selected == "All":
 
-st.subheader(f"Top 10 {level} Categories in {latest_year}")
+    default = data[data["Year"] == latest_year]
 
-fig_default = px.bar(
-    top10,
-    x=level,
-    y="Final_FOB_Value",
-    title="Top 10 Products by FOB Value",
-    text_auto=True
-)
+    top10 = (
+        default.groupby(level, as_index=False)["Final_FOB_Value"]
+        .sum()
+        .sort_values("Final_FOB_Value", ascending=False)
+        .head(10)
+    )
 
-st.plotly_chart(fig_default, use_container_width=True)
+    st.subheader(f"Top 10 {level} Categories in {latest_year}")
+
+    fig_default = px.bar(
+        top10,
+        x=level,
+        y="Final_FOB_Value",
+        title="Top 10 Products by FOB Value",
+        text_auto=True
+    )
+
+    st.plotly_chart(fig_default, use_container_width=True)
+
 
 # ----- TIME SERIES GRAPH -----
 
@@ -90,22 +99,30 @@ fig = px.line(
 
 st.plotly_chart(fig, use_container_width=True)
 
-# ----- SHOW DESCRIPTION OF CURRENT SELECTION -----
+
+# ----- SHOW DESCRIPTION ONLY IF A CODE IS CHOSEN -----
 
 if selected != "All":
+
     st.subheader("Selected Code Description")
 
-    if level == "HS6":
-        desc = options[options["HS6"] == code]["HS_Description"].values[0]
-    elif level == "HS4":
-        desc = options[options["HS4"] == code]["HS4_Description"].values[0]
-    else:
-        desc = options[options["HS2"] == code]["HS2_Description"].values[0]
+    try:
+        if level == "HS6":
+            desc = options[options["HS6"] == code]["HS_Description"].values[0]
+        elif level == "HS4":
+            desc = options[options["HS4"] == code]["HS4_Description"].values[0]
+        else:
+            desc = options[options["HS2"] == code]["HS2_Description"].values[0]
 
-    st.write(f"**{code}** – {desc}")
+        st.write(f"**{code}** – {desc}")
+
+    except IndexError:
+        st.warning("Description not available for the selected code.")
+
 
 # ----- SUMMARY -----
 
 st.sidebar.write("Total Value Displayed:")
 st.sidebar.write(f"{data['Final_FOB_Value'].sum():,.0f}")
+
 
