@@ -115,7 +115,12 @@ fig = px.line(
 fig.update_layout(
     yaxis_title="Trade Value (USD)",
     yaxis=dict(showgrid=True),
-    xaxis=dict(showgrid=True)
+    xaxis=dict(
+        showgrid=True,
+        tickmode="array",
+        tickvals=sorted(grouped["Year"].unique()),
+        ticktext=[str(y) for y in sorted(grouped["Year"].unique())]
+    )
 )
 
 st.plotly_chart(fig, use_container_width=True)
@@ -131,3 +136,4 @@ if selected != "All":
         desc = "No official description available in dataset"
 
     st.write(f"**{code}** – {desc}")
+
