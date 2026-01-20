@@ -146,7 +146,7 @@ if selected == "Home":
         yaxis=dict(showgrid=True)
     )
 
-    st.plotly_chart(fig, width="stretch")
+    st.plotly_chart(fig_default, width="stretch")
 
 
 # ---- TIME SERIES GRAPH ----
@@ -269,6 +269,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
