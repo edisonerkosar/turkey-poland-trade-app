@@ -164,9 +164,6 @@ else:
 grouped = data_for_chart.groupby(["Year", level], as_index=False)["Final_FOB_Value"].sum()
 
 # Check if we have enough data at all
-if grouped["Final_FOB_Value"].sum() == 0:
-    st.warning("No meaningful historical data available for this selection.")
-    st.stop()
 
 complete = []
 
@@ -175,10 +172,9 @@ for c in grouped[level].unique():
     subset = grouped[grouped[level] == c]
 
     # Require at least two non-zero observations
-    if subset[subset["Final_FOB_Value"] > 0].shape[0] < 2:
-        if show_projection:
-            st.info(f"Not enough data to create projections for code {c}.")
-        continue
+    # Only enforce minimum-data rule when projections are requested
+if show_projection and subset[subset["Final_FOB_Value"] > 0].shape[0] < 2:
+    st.info(f"Not enough data to create projections for code {c}. Showing historical data only.")
 
     # HISTORICAL PART – only up to 2024
     hist_full = pd.DataFrame({
@@ -274,6 +270,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
