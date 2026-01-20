@@ -152,7 +152,8 @@ if selected == "Home":
 # ---- TIME SERIES GRAPH ----
 st.subheader("Trade Over Time")
 
-all_years = list(range(2013, 2031)) if show_projection else list(range(2013, 2025))
+all_years = list(range(2013, 2025))
+proj_years = list(range(2025, 2031))
 
 if selected == "Home":
     top_codes = list(top10[level])
@@ -162,31 +163,59 @@ else:
 
 grouped = data_for_chart.groupby(["Year", level], as_index=False)["Final_FOB_Value"].sum()
 
+# Check if we have enough data at all
+if grouped["Final_FOB_Value"].sum() == 0:
+    st.warning("No meaningful historical data available for this selection.")
+    st.stop()
+
 complete = []
 
 for c in grouped[level].unique():
 
     subset = grouped[grouped[level] == c]
 
-    full = pd.DataFrame({
+    # Require at least two non-zero observations
+    if subset[subset["Final_FOB_Value"] > 0].shape[0] < 2:
+        if show_projection:
+            st.info(f"Not enough data to create projections for code {c}.")
+        continue
+
+    # HISTORICAL PART – only up to 2024
+    hist_full = pd.DataFrame({
         "Year": all_years,
         level: c
     })
 
-    merged = full.merge(subset, on=["Year", level], how="left")
-    merged["Final_FOB_Value"] = merged["Final_FOB_Value"].fillna(0)
-    merged["Segment"] = "Historical"
+    hist = hist_full.merge(subset, on=["Year", level], how="left")
+    hist["Final_FOB_Value"] = hist["Final_FOB_Value"].fillna(0)
+    hist["Segment"] = "Historical"
 
     if show_projection:
         proj = project_series_cagr(subset)
 
-        if proj is not None:
+        if proj is not None and not proj.empty:
+
+            # Connect last historical point to first projection point
+            last_hist = subset.sort_values("Year").iloc[-1:]
+            last_hist = last_hist.copy()
+            last_hist["Segment"] = "Projection"
+
             proj[level] = c
             proj["Segment"] = "Projection"
 
-            merged = pd.concat([merged, proj], ignore_index=True)
+            merged_proj = pd.concat([last_hist, proj], ignore_index=True)
+
+            merged = pd.concat([hist, merged_proj], ignore_index=True)
+        else:
+            merged = hist
+    else:
+        merged = hist
 
     complete.append(merged)
+
+if not complete:
+    st.warning("Not enough data available to generate chart for this selection.")
+    st.stop()
 
 chart_data = pd.concat(complete, ignore_index=True)
 chart_data = chart_data.sort_values("Year")
@@ -206,8 +235,8 @@ fig.update_layout(
     xaxis=dict(
         showgrid=True,
         tickmode="array",
-        tickvals=all_years,
-        ticktext=[str(y) for y in all_years]
+        tickvals=all_years + (proj_years if show_projection else []),
+        ticktext=[str(y) for y in (all_years + (proj_years if show_projection else []))]
     ),
     legend_title_text=""
 )
@@ -245,6 +274,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
