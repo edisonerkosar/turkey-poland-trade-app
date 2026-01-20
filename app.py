@@ -146,7 +146,7 @@ if selected == "Home":
         yaxis=dict(showgrid=True)
     )
 
-    st.plotly_chart(fig_default, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
 
 
 # ---- TIME SERIES GRAPH ----
@@ -171,10 +171,9 @@ for c in grouped[level].unique():
 
     subset = grouped[grouped[level] == c]
 
-    # Require at least two non-zero observations
-    # Only enforce minimum-data rule when projections are requested
-if show_projection and subset[subset["Final_FOB_Value"] > 0].shape[0] < 2:
-    st.info(f"Not enough data to create projections for code {c}. Showing historical data only.")
+    # Only warn about projections when they are requested
+    if show_projection and subset[subset["Final_FOB_Value"] > 0].shape[0] < 2:
+        st.info(f"Not enough data to create projections for code {c}. Showing historical data only.")
 
     # HISTORICAL PART – only up to 2024
     hist_full = pd.DataFrame({
@@ -191,7 +190,6 @@ if show_projection and subset[subset["Final_FOB_Value"] > 0].shape[0] < 2:
 
         if proj is not None and not proj.empty:
 
-            # Connect last historical point to first projection point
             last_hist = subset.sort_values("Year").iloc[-1:]
             last_hist = last_hist.copy()
             last_hist["Segment"] = "Projection"
@@ -208,6 +206,7 @@ if show_projection and subset[subset["Final_FOB_Value"] > 0].shape[0] < 2:
         merged = hist
 
     complete.append(merged)
+
 
 if not complete:
     st.warning("Not enough data available to generate chart for this selection.")
@@ -237,7 +236,7 @@ fig.update_layout(
     legend_title_text=""
 )
 
-st.plotly_chart(fig, use_container_width=True)
+st.plotly_chart(fig, width="stretch")
 
 # ---- DESCRIPTION DISPLAY ----
 if selected != "Home":
@@ -270,6 +269,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
