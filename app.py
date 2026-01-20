@@ -9,7 +9,16 @@ st.title("Turkey–Poland Trade Explorer (2013–2024)")
 @st.cache_data(ttl=3600)
 def load_data():
     
-    def project_series_cagr(df_series):
+   df = pd.read_excel("Unified_Trade_CLEAN_v2.xlsx")
+
+    df["HS6"] = df["HS6"].astype(str).str.zfill(6)
+    df["HS4"] = df["HS4"].astype(str).str.zfill(4)
+    df["HS2"] = df["HS2"].astype(str).str.zfill(2)
+
+    return df
+
+
+def project_series_cagr(df_series):
     df_series = df_series.sort_values("Year")
 
     recent = df_series[df_series["Year"] >= 2020]
@@ -45,13 +54,6 @@ def load_data():
         })
 
     return pd.DataFrame(projections)
-    df = pd.read_excel("Unified_Trade_CLEAN_v2.xlsx")
-
-    df["HS6"] = df["HS6"].astype(str).str.zfill(6)
-    df["HS4"] = df["HS4"].astype(str).str.zfill(4)
-    df["HS2"] = df["HS2"].astype(str).str.zfill(2)
-    
-    return df
 
 df = load_data()
 
@@ -265,6 +267,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
