@@ -8,6 +8,43 @@ st.title("Turkey–Poland Trade Explorer (2013–2024)")
 
 @st.cache_data(ttl=3600)
 def load_data():
+    
+    def project_series_cagr(df_series):
+    df_series = df_series.sort_values("Year")
+
+    recent = df_series[df_series["Year"] >= 2020]
+
+    if len(recent) < 2:
+        return None
+
+    start = recent.iloc[0]["Final_FOB_Value"]
+    end = recent.iloc[-1]["Final_FOB_Value"]
+
+    if start <= 0:
+        return None
+
+    years = recent.iloc[-1]["Year"] - recent.iloc[0]["Year"]
+
+    if years == 0:
+        return None
+
+    cagr = (end / start) ** (1 / years) - 1
+
+    cagr = max(min(cagr, 0.35), -0.35)
+
+    projections = []
+
+    last_value = df_series.iloc[-1]["Final_FOB_Value"]
+    last_year = int(df_series.iloc[-1]["Year"])
+
+    for y in range(last_year + 1, 2031):
+        last_value = last_value * (1 + cagr)
+        projections.append({
+            "Year": y,
+            "Final_FOB_Value": max(last_value, 0)
+        })
+
+    return pd.DataFrame(projections)
     df = pd.read_excel("Unified_Trade_CLEAN_v2.xlsx")
 
     df["HS6"] = df["HS6"].astype(str).str.zfill(6)
@@ -32,6 +69,7 @@ level = st.sidebar.selectbox(
     "Aggregation Level",
     ["HS6", "HS4", "HS2"]
 )
+show_projection = st.sidebar.checkbox("Show Trend Projections to 2030")
 
 if level == "HS6":
     options = data[["HS6", "HS_Description"]].drop_duplicates()
@@ -109,9 +147,13 @@ if selected == "Home":
 
 
 # ---- TIME SERIES GRAPH ----
-st.subheader("Trade Over Time")
+title = "Trade Over Time"
+if show_projection:
+    title += " (with Trend Projections to 2030)"
 
-all_years = list(range(2013, 2025))
+st.subheader(title)
+
+all_years = list(range(2013, 2031)) if show_projection else list(range(2013, 2025))
 
 # On Home page – only show top 10 goods
 if selected == "Home":
@@ -142,18 +184,42 @@ for c in grouped[level].unique():
     merged = full.merge(subset, on=["Year", level], how="left")
     merged["Final_FOB_Value"] = merged["Final_FOB_Value"].fillna(0)
 
+    if show_projection:
+        proj = project_series_cagr(subset)
+
+        if proj is not None:
+            proj[level] = c
+            proj["Projected"] = True
+
+            merged = pd.concat([merged, proj], ignore_index=True)
+
     complete.append(merged)
 
 grouped = pd.concat(complete, ignore_index=True)
 grouped = grouped.sort_values("Year")
 
-fig = px.line(
-    grouped,
-    x="Year",
-    y="Final_FOB_Value",
-    color=level,
-    labels={"Final_FOB_Value": "Trade Value (USD)"}
-)
+if show_projection:
+    grouped["Projected"] = grouped.get("Projected", False)
+else:
+    grouped["Projected"] = False
+
+if show_projection:
+    fig = px.line(
+        grouped,
+        x="Year",
+        y="Final_FOB_Value",
+        color=level,
+        line_dash="Projected",
+        labels={"Final_FOB_Value": "Trade Value (USD)"}
+    )
+else:
+    fig = px.line(
+        grouped,
+        x="Year",
+        y="Final_FOB_Value",
+        color=level,
+        labels={"Final_FOB_Value": "Trade Value (USD)"}
+    )
 
 fig.update_layout(
     yaxis_title="Trade Value (USD)",
@@ -199,6 +265,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
