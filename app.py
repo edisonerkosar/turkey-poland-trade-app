@@ -150,29 +150,18 @@ if selected == "Home":
 
 
 # ---- TIME SERIES GRAPH ----
-title = "Trade Over Time"
-if show_projection:
-    title += " (with Trend Projections to 2030)"
-
-st.subheader(title)
+st.subheader("Trade Over Time")
 
 all_years = list(range(2013, 2031)) if show_projection else list(range(2013, 2025))
 
-# On Home page – only show top 10 goods
 if selected == "Home":
-
-    # Use the same top10 list already calculated above
     top_codes = list(top10[level])
-
-    data_top = data[data[level].isin(top_codes)]
-
-    grouped = data_top.groupby(["Year", level], as_index=False)["Final_FOB_Value"].sum()
-
+    data_for_chart = data[data[level].isin(top_codes)]
 else:
-    # For a single selected code
-    grouped = data.groupby(["Year", level], as_index=False)["Final_FOB_Value"].sum()
+    data_for_chart = data
 
-# Ensure all years appear
+grouped = data_for_chart.groupby(["Year", level], as_index=False)["Final_FOB_Value"].sum()
+
 complete = []
 
 for c in grouped[level].unique():
@@ -186,43 +175,30 @@ for c in grouped[level].unique():
 
     merged = full.merge(subset, on=["Year", level], how="left")
     merged["Final_FOB_Value"] = merged["Final_FOB_Value"].fillna(0)
+    merged["Segment"] = "Historical"
 
     if show_projection:
         proj = project_series_cagr(subset)
 
         if proj is not None:
             proj[level] = c
-            proj["Projected"] = True
+            proj["Segment"] = "Projection"
 
             merged = pd.concat([merged, proj], ignore_index=True)
 
     complete.append(merged)
 
-grouped = pd.concat(complete, ignore_index=True)
-grouped = grouped.sort_values("Year")
+chart_data = pd.concat(complete, ignore_index=True)
+chart_data = chart_data.sort_values("Year")
 
-if show_projection:
-    grouped["Projected"] = grouped.get("Projected", False)
-else:
-    grouped["Projected"] = False
-
-if show_projection:
-    fig = px.line(
-        grouped,
-        x="Year",
-        y="Final_FOB_Value",
-        color=level,
-        line_dash="Projected",
-        labels={"Final_FOB_Value": "Trade Value (USD)"}
-    )
-else:
-    fig = px.line(
-        grouped,
-        x="Year",
-        y="Final_FOB_Value",
-        color=level,
-        labels={"Final_FOB_Value": "Trade Value (USD)"}
-    )
+fig = px.line(
+    chart_data,
+    x="Year",
+    y="Final_FOB_Value",
+    color=level,
+    line_dash="Segment",
+    labels={"Final_FOB_Value": "Trade Value (USD)"}
+)
 
 fig.update_layout(
     yaxis_title="Trade Value (USD)",
@@ -232,7 +208,8 @@ fig.update_layout(
         tickmode="array",
         tickvals=all_years,
         ticktext=[str(y) for y in all_years]
-    )
+    ),
+    legend_title_text=""
 )
 
 st.plotly_chart(fig, use_container_width=True)
@@ -268,6 +245,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
