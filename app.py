@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import os
 
 st.set_page_config(layout="wide")
 
@@ -9,7 +10,10 @@ st.title("Turkey–Poland Trade Explorer (2013–2024)")
 
 @st.cache_data(ttl=3600)
 def load_data():
+    base = os.path.dirname(__file__)
     df = pd.read_excel("data/Unified_Trade_CLEAN_v2.xlsx")
+
+    df = pd.read_excel(path, engine="openpyxl")
 
     df["HS6"] = df["HS6"].astype(str).str.zfill(6)
     df["HS4"] = df["HS4"].astype(str).str.zfill(4)
@@ -271,6 +275,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
