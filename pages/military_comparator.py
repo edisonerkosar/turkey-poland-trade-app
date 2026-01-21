@@ -15,34 +15,9 @@ def load_military_data():
     df = pd.read_excel(path, engine="openpyxl")
 
     st.write("DEBUG – Columns in raw file:")
-    st.write(df.columns)
+    st.write(df.columns.tolist())
 
-    # Try to auto-detect trade value column
-    value_col = None
-
-    for col in df.columns:
-        if "Trade" in col and "Value" in col:
-            value_col = col
-
-    if value_col is None:
-        st.error("Could not detect trade value column in dataset")
-        st.stop()
-
-    df = df.rename(columns={
-        "Reporter": "Country",
-        "Commodity Code": "HS6",
-        value_col: "Final_Value"
-    })
-
-    # Create HS levels
-    df["HS6"] = df["HS6"].astype(str).str.zfill(6)
-    df["HS4"] = df["HS6"].str[:4]
-    df["HS2"] = df["HS6"].str[:2]
-
-    # Create compatibility columns
-    df["Turkey_Reported_Value"] = df["Final_Value"]
-    df["EU_Reported_Value"] = df["Final_Value"]
-    df["Discrepancy"] = 0
+    st.stop()
 
     return df
 
