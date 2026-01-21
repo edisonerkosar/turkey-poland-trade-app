@@ -212,25 +212,19 @@ else:
 st.markdown("#### HS4 Code Descriptions (Color Matched)")
 
 # --- safely extract colors from the actual pie ---
+# --- extract colors from the ACTUAL rendered pie ---
 color_map = {}
 
 if not pie_focus.empty:
-    fig_temp = px.pie(
-        pie_focus,
-        names="cmdCode",
-        values="primaryValue"
-    )
+    real_trace = fig_pie.data[0]
 
-    trace = fig_temp.data[0]
+    labels = list(real_trace.labels)
 
-    labels = list(trace.labels)
-
-    # If Plotly did not auto-assign colors, generate them
-    if trace.marker.colors is None:
+    if real_trace.marker.colors is None:
         colors = px.colors.qualitative.Plotly
         colors = (colors * (len(labels) // len(colors) + 1))[:len(labels)]
     else:
-        colors = list(trace.marker.colors)
+        colors = list(real_trace.marker.colors)
 
     for lbl, col in zip(labels, colors):
         color_map[lbl] = col
