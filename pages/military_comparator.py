@@ -8,7 +8,7 @@ st.title("Turkey – EU Military Trade Comparator (2013–2024)")
 
 @st.cache_data
 def load_military_data():
-    df = pd.read_excel("Military_Trade_EU_Crosschecked.xlsx")
+    df = pd.read_excel("data/Military_Trade_EU_Crosschecked.xlsx")
 
     df["HS6"] = df["HS6"].astype(str).str.zfill(6)
     df["HS4"] = df["HS4"].astype(str).str.zfill(4)
