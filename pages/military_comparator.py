@@ -130,6 +130,7 @@ else:
 
     st.subheader(f"{focus_country} – Total Military Imports from Turkey")
 
+    # -------- TIME SERIES (SUM OF SELECTED HS4) --------
     country_sum = (
         df[df["Importer"] == focus_country]
         .groupby("refYear", as_index=False)["primaryValue"]
@@ -161,6 +162,57 @@ else:
 
     st.plotly_chart(fig, width="stretch")
 
+    # -------- PIE COMPOSITION --------
+    st.subheader("Military Import Structure by Product")
+
+    pie_year = st.selectbox(
+        "Select Year for Composition",
+        sorted(df["refYear"].unique()),
+        index=len(sorted(df["refYear"].unique())) - 1
+    )
+
+    col1, col2 = st.columns(2)
+
+    # ---- FOCUS COUNTRY PIE ----
+    pie_focus = (
+        df[(df["Importer"] == focus_country) & (df["refYear"] == pie_year)]
+        .groupby("cmdCode", as_index=False)["primaryValue"]
+        .sum()
+    )
+
+    with col1:
+        st.markdown(f"### {focus_country} ({pie_year})")
+        fig_pie = px.pie(
+            pie_focus,
+            names="cmdCode",
+            values="primaryValue",
+            hole=0.4
+        )
+        st.plotly_chart(fig_pie, use_container_width=True)
+
+    # ---- POLAND PIE (OPTIONAL) ----
+    if compare_poland and focus_country != "Poland":
+        pie_poland = (
+            df[(df["Importer"] == "Poland") & (df["refYear"] == pie_year)]
+            .groupby("cmdCode", as_index=False)["primaryValue"]
+            .sum()
+        )
+
+        with col2:
+            st.markdown(f"### Poland ({pie_year})")
+            fig_pie_pl = px.pie(
+                pie_poland,
+                names="cmdCode",
+                values="primaryValue",
+                hole=0.4
+            )
+            st.plotly_chart(fig_pie_pl, use_container_width=True)
+
+    # -------- HS4 LEGEND --------
+    st.markdown("#### HS4 Code Descriptions")
+
+    for code in hs4_selected:
+        st.write(f"**{code}** – {hs4_map.get(code, 'Description not available')}")
 # ---------- FOOTER ----------
 st.sidebar.markdown("---")
 st.sidebar.markdown("""
