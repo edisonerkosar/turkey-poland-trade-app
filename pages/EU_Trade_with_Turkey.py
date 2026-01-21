@@ -26,6 +26,9 @@ def load_trade():
     tr_eu["Direction"] = "TR_to_EU"
 
     full = pd.concat([eu_tr, tr_eu], ignore_index=True)
+    full = full[full["Country"].str.lower() != "turkey"]
+    full = full[full["Country"].str.lower() != "türkiye"]
+
     full["Year"] = full["Year"].astype(int)
     full["Value"] = pd.to_numeric(full["Value"], errors="coerce").fillna(0)
 
@@ -78,7 +81,18 @@ else:  # Total Trade Volume
     data = pivot[["Year", "Country", "Value"]]
 
 # ---------- TIME SERIES (ALL COUNTRIES) ----------
-st.subheader("EU–Turkey Trade Over Time")
+if metric == "Total Trade Volume":
+    main_title = "Trade Volume of Turkey with EU Countries Over Time"
+    cagr_title = "CAGR of Total Trade with Turkey (2013–2024)"
+elif metric == "Imports to Turkey from EU":
+    main_title = "EU Exports to Turkey Over Time"
+    cagr_title = "CAGR of Exports to Turkey by Country (2013–2024)"
+else:
+    main_title = "Turkey’s Exports to the EU Over Time"
+    cagr_title = "CAGR of Turkey’s Exports to EU Countries (2013–2024)"
+
+st.subheader(main_title)
+
 
 ts = (
     data.groupby(["Year", "Country"], as_index=False)["Value"]
@@ -112,7 +126,7 @@ fig.update_layout(
 st.plotly_chart(fig, width="stretch")
 
 # ---------- CAGR ----------
-st.subheader("CAGR by Country (2013–2024)")
+st.subheader(cagr_title)
 
 cagr_list = []
 
@@ -173,13 +187,20 @@ if compare_poland and focus_country != "Poland":
         line=dict(width=4, dash="dash")
     )
 
-fig2.update_layout(
+fig.update_layout(
+    legend_title_text="EU Country",
+    legend=dict(
+        itemclick="toggle",        # click to hide/show
+        itemdoubleclick="toggleothers",
+        orientation="v",
+        x=1.02,
+        y=1
+    ),
     xaxis=dict(
         tickmode="array",
         tickvals=ALL_YEARS,
         showgrid=True
-    ),
-    yaxis_title="Trade Value (USD)"
+    )
 )
 
 st.plotly_chart(fig2, width="stretch")
