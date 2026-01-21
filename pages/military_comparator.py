@@ -10,7 +10,7 @@ st.title("Turkey – EU Military Trade Comparator (2013–2024)")
 @st.cache_data
 def load_military_data():
     base = os.path.dirname(__file__)
-    df = pd.read_excel("data/Military_Trade_EU_Crosschecked.xlsx")
+    path = os.path.join(base, "data", "Military_Trade_EU_Crosschecked.xlsx")
     
     df = pd.read_excel(path, engine="openpyxl")
     
