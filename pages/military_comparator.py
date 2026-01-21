@@ -13,15 +13,15 @@ def load_military_data():
     path = os.path.join(base, "..", "data", "EURMTR_Final.xlsx")
 
     df = pd.read_excel(path)
-
     df["refYear"] = df["refYear"].astype(int)
     df["cmdCode"] = df["cmdCode"].astype(str).str.zfill(4)
     df["Importer"] = df["Importer"].astype(str)
     df["primaryValue"] = pd.to_numeric(df["primaryValue"], errors="coerce").fillna(0)
-
     return df
 
 df = load_military_data()
+
+ALL_YEARS = list(range(2013, 2025))
 
 # ---------- HS4 MAP ----------
 hs4_map = {
@@ -33,14 +33,15 @@ hs4_map = {
     "9302": "Revolvers & Pistols",
     "9306": "Ammunition"
 }
+
 HS4_COLORS = {
-    "8701": "#ff7f0e",  # orange
-    "8802": "#1f77b4",  # blue
-    "8803": "#2ca02c",  # green
-    "8906": "#9467bd",  # purple
-    "9301": "#e377c2",  # pink
-    "9302": "#d62728",  # red
-    "9306": "#17becf",  # teal
+    "8701": "#ff7f0e",
+    "8802": "#1f77b4",
+    "8803": "#2ca02c",
+    "8906": "#9467bd",
+    "9301": "#e377c2",
+    "9302": "#d62728",
+    "9306": "#17becf",
 }
 
 # ---------- SIDEBAR ----------
@@ -90,7 +91,15 @@ if view_mode == "Home (EU Comparison)":
 
     fig.update_layout(
         legend_title_text="EU Country",
-        yaxis_title="Trade Value (USD)"
+        yaxis_title="Trade Value (USD)",
+        xaxis=dict(
+            tickmode="array",
+            tickvals=ALL_YEARS,
+            ticktext=[str(y) for y in ALL_YEARS],
+            showgrid=True,
+            gridcolor="rgba(255,255,255,0.08)"
+        ),
+        yaxis=dict(showgrid=True, gridcolor="rgba(255,255,255,0.08)")
     )
 
     st.plotly_chart(fig, width="stretch")
@@ -98,8 +107,8 @@ if view_mode == "Home (EU Comparison)":
     # ----- RANKING -----
     rank_year = st.selectbox(
         "Ranking Year",
-        sorted(df["refYear"].unique()),
-        index=len(sorted(df["refYear"].unique())) - 1
+        ALL_YEARS,
+        index=len(ALL_YEARS) - 1
     )
 
     st.subheader(f"EU Ranking by Military Imports from Turkey ({rank_year})")
@@ -139,7 +148,7 @@ else:
 
     st.subheader(f"{focus_country} – Total Military Imports from Turkey")
 
-    # -------- TIME SERIES (SUM OF SELECTED HS4) --------
+    # -------- TIME SERIES --------
     country_sum = (
         df[df["Importer"] == focus_country]
         .groupby("refYear", as_index=False)["primaryValue"]
@@ -169,20 +178,30 @@ else:
             line=dict(width=4, dash="dash")
         )
 
+    fig.update_layout(
+        xaxis=dict(
+            tickmode="array",
+            tickvals=ALL_YEARS,
+            ticktext=[str(y) for y in ALL_YEARS],
+            showgrid=True,
+            gridcolor="rgba(255,255,255,0.08)"
+        ),
+        yaxis=dict(showgrid=True, gridcolor="rgba(255,255,255,0.08)")
+    )
+
     st.plotly_chart(fig, width="stretch")
 
-        # -------- PIE COMPOSITION --------
+    # -------- PIE COMPOSITION --------
     st.subheader("Military Import Structure by Product")
 
     pie_year = st.selectbox(
         "Select Year for Composition",
-        sorted(df["refYear"].unique()),
-        index=len(sorted(df["refYear"].unique())) - 1
+        ALL_YEARS,
+        index=len(ALL_YEARS) - 1
     )
 
     col1, col2 = st.columns(2)
 
-    # ---- FOCUS COUNTRY PIE ----
     pie_focus = (
         df[(df["Importer"] == focus_country) & (df["refYear"] == pie_year)]
         .groupby("cmdCode", as_index=False)["primaryValue"]
@@ -191,7 +210,6 @@ else:
 
     with col1:
         st.markdown(f"### {focus_country} ({pie_year})")
-
         if pie_focus.empty:
             st.info(f"No data for {focus_country} in {pie_year}.")
         else:
@@ -205,7 +223,6 @@ else:
             )
             st.plotly_chart(fig_pie, use_container_width=True)
 
-    # ---- POLAND PIE (OPTIONAL) ----
     if compare_poland and focus_country != "Poland":
         pie_poland = (
             df[(df["Importer"] == "Poland") & (df["refYear"] == pie_year)]
@@ -215,7 +232,6 @@ else:
 
         with col2:
             st.markdown(f"### Poland ({pie_year})")
-
             if pie_poland.empty:
                 st.info(f"No data for Poland in {pie_year}.")
             else:
@@ -233,7 +249,6 @@ else:
     st.markdown("#### HS4 Code Descriptions")
 
     active_codes = set(pie_focus["cmdCode"])
-
     if compare_poland and focus_country != "Poland" and not pie_poland.empty:
         active_codes = active_codes.union(set(pie_poland["cmdCode"]))
 
