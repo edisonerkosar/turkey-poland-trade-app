@@ -45,8 +45,8 @@ metric = st.sidebar.selectbox(
     "Trade Measure",
     [
         "Total Trade Volume",
-        "Imports to Turkey from EU",
-        "Imports to EU from Turkey",
+        "Exports to Turkey from EU",
+        "Exports to EU from Turkey",
     ]
 )
 
@@ -64,21 +64,31 @@ compare_poland = st.sidebar.toggle(
 )
 
 # ---------- SELECT MEASURE ----------
-if metric == "Imports to Turkey from EU":
+if metric == "Exports to Turkey from EU":
     data = df[df["Direction"] == "EU_to_TR"]
 
-elif metric == "Imports to EU from Turkey":
+elif metric == "Exports to EU from Turkey":
     data = df[df["Direction"] == "TR_to_EU"]
 
 else:  # Total Trade Volume
+
     pivot = (
         df.groupby(["Year", "Country", "Direction"])["Value"]
         .sum()
-        .unstack(fill_value=0)
+        .unstack()
         .reset_index()
     )
+
+    # Ensure both columns always exist
+    if "EU_to_TR" not in pivot.columns:
+        pivot["EU_to_TR"] = 0
+    if "TR_to_EU" not in pivot.columns:
+        pivot["TR_to_EU"] = 0
+
     pivot["Value"] = pivot["EU_to_TR"] + pivot["TR_to_EU"]
+
     data = pivot[["Year", "Country", "Value"]]
+
 
 # ---------- TIME SERIES (ALL COUNTRIES) ----------
 if metric == "Total Trade Volume":
