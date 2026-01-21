@@ -171,7 +171,7 @@ else:
 
     st.plotly_chart(fig, width="stretch")
 
-    # -------- PIE COMPOSITION --------
+        # -------- PIE COMPOSITION --------
     st.subheader("Military Import Structure by Product")
 
     pie_year = st.selectbox(
@@ -184,89 +184,69 @@ else:
 
     # ---- FOCUS COUNTRY PIE ----
     pie_focus = (
-    if pie_focus.empty:
-     st.info(f"No data for {focus_country} in {pie_year}.")
-    else:
-        pie_focus["color"] = pie_focus["cmdCode"].map(HS4_COLORS)
-
-        fig_pie = px.pie(
-            pie_focus,
-            names="cmdCode",
-            values="primaryValue",
-            hole=0.4,
-            color="cmdCode",
-            color_discrete_map=HS4_COLORS
-    )
-
-    st.plotly_chart(fig_pie, use_container_width=True)
-
-    # ---- POLAND PIE (OPTIONAL) ----
-    if compare_poland and focus_country != "Poland":
-    pie_poland = (
-        df[(df["Importer"] == "Poland") & (df["refYear"] == pie_year)]
+        df[(df["Importer"] == focus_country) & (df["refYear"] == pie_year)]
         .groupby("cmdCode", as_index=False)["primaryValue"]
         .sum()
     )
 
-    if pie_poland.empty:
-        st.info(f"No data for Poland in {pie_year}.")
-    else:
-        fig_pie_pl = px.pie(
-            pie_poland,
-            names="cmdCode",
-            values="primaryValue",
-            hole=0.4,
-            color="cmdCode",
-            color_discrete_map=HS4_COLORS
+    with col1:
+        st.markdown(f"### {focus_country} ({pie_year})")
+
+        if pie_focus.empty:
+            st.info(f"No data for {focus_country} in {pie_year}.")
+        else:
+            fig_pie = px.pie(
+                pie_focus,
+                names="cmdCode",
+                values="primaryValue",
+                hole=0.4,
+                color="cmdCode",
+                color_discrete_map=HS4_COLORS
+            )
+            st.plotly_chart(fig_pie, use_container_width=True)
+
+    # ---- POLAND PIE (OPTIONAL) ----
+    if compare_poland and focus_country != "Poland":
+        pie_poland = (
+            df[(df["Importer"] == "Poland") & (df["refYear"] == pie_year)]
+            .groupby("cmdCode", as_index=False)["primaryValue"]
+            .sum()
         )
 
-        st.plotly_chart(fig_pie_pl, use_container_width=True)
+        with col2:
+            st.markdown(f"### Poland ({pie_year})")
+
+            if pie_poland.empty:
+                st.info(f"No data for Poland in {pie_year}.")
+            else:
+                fig_pie_pl = px.pie(
+                    pie_poland,
+                    names="cmdCode",
+                    values="primaryValue",
+                    hole=0.4,
+                    color="cmdCode",
+                    color_discrete_map=HS4_COLORS
+                )
+                st.plotly_chart(fig_pie_pl, use_container_width=True)
 
     # -------- HS4 LEGEND --------
-st.markdown("#### HS4 Code Descriptions")
+    st.markdown("#### HS4 Code Descriptions")
 
-active_codes = set(pie_focus["cmdCode"])
+    active_codes = set(pie_focus["cmdCode"])
 
-for code, desc in hs4_map.items():
-    if code in active_codes:
-        color = HS4_COLORS.get(code, "#FFFFFF")
-        st.markdown(
-            f"<span style='color:{color}; font-weight:600'>{code}</span> – {desc}",
-            unsafe_allow_html=True
-        )
-    else:
-        st.markdown(
-            f"<span style='color:#666666'>{code}</span> – {desc}",
-            unsafe_allow_html=True
-        )
+    for code, desc in hs4_map.items():
+        if code in active_codes:
+            color = HS4_COLORS.get(code, "#FFFFFF")
+            st.markdown(
+                f"<span style='color:{color}; font-weight:600'>{code}</span> – {desc}",
+                unsafe_allow_html=True
+            )
+        else:
+            st.markdown(
+                f"<span style='color:#666666'>{code}</span> – {desc}",
+                unsafe_allow_html=True
+            )
 
-# --- safely extract colors from the actual pie ---
-# --- extract colors from the ACTUAL rendered pie ---
-color_map = {}
-
-if not pie_focus.empty:
-    real_trace = fig_pie.data[0]
-
-    labels = list(real_trace.labels)
-
-    if real_trace.marker.colors is None:
-        colors = px.colors.qualitative.Plotly
-        colors = (colors * (len(labels) // len(colors) + 1))[:len(labels)]
-    else:
-        colors = list(real_trace.marker.colors)
-
-    for lbl, col in zip(labels, colors):
-        color_map[lbl] = col
-
-# --- render legend text ---
-for code in pie_focus["cmdCode"]:
-    color = color_map.get(code, "#FFFFFF")
-    desc = hs4_map.get(code, "Description not available")
-
-    st.markdown(
-        f"<span style='color:{color}; font-weight:600'>{code}</span> – {desc}",
-        unsafe_allow_html=True
-    )
 # ---------- FOOTER ----------
 st.sidebar.markdown("---")
 st.sidebar.markdown("""
