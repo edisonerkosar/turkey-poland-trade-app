@@ -209,20 +209,33 @@ else:
             st.plotly_chart(fig_pie_pl, use_container_width=True)
 
     # -------- HS4 LEGEND --------
-    st.markdown("#### HS4 Code Descriptions (Color Matched)")
+ st.markdown("#### HS4 Code Descriptions (Color Matched)")
 
-# Extract Plotly color mapping from focus pie
+# --- safely extract colors from the actual pie ---
 color_map = {}
+
 if not pie_focus.empty:
     fig_temp = px.pie(
         pie_focus,
         names="cmdCode",
         values="primaryValue"
     )
-    for trace in fig_temp.data:
-        for label, color in zip(trace.labels, trace.marker.colors):
-            color_map[label] = color
 
+    trace = fig_temp.data[0]
+
+    labels = list(trace.labels)
+
+    # If Plotly did not auto-assign colors, generate them
+    if trace.marker.colors is None:
+        colors = px.colors.qualitative.Plotly
+        colors = (colors * (len(labels) // len(colors) + 1))[:len(labels)]
+    else:
+        colors = list(trace.marker.colors)
+
+    for lbl, col in zip(labels, colors):
+        color_map[lbl] = col
+
+# --- render legend text ---
 for code in pie_focus["cmdCode"]:
     color = color_map.get(code, "#FFFFFF")
     desc = hs4_map.get(code, "Description not available")
