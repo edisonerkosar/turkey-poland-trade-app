@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import os
 
 st.set_page_config(layout="wide")
 
@@ -8,8 +9,11 @@ st.title("Turkey – EU Military Trade Comparator (2013–2024)")
 
 @st.cache_data
 def load_military_data():
+    base = os.path.dirname(__file__)
     df = pd.read_excel("data/Military_Trade_EU_Crosschecked.xlsx")
-
+    
+    df = pd.read_excel(path, engine="openpyxl")
+    
     df["HS6"] = df["HS6"].astype(str).str.zfill(6)
     df["HS4"] = df["HS4"].astype(str).str.zfill(4)
     df["HS2"] = df["HS2"].astype(str).str.zfill(2)
