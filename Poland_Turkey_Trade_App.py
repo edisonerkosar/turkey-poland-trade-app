@@ -2,8 +2,6 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import os
-st.write("Checking data folder contents:")
-st.write(os.listdir(os.path.join(os.path.dirname(__file__), "data")))
 
 st.set_page_config(layout="wide")
 
@@ -277,6 +275,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
