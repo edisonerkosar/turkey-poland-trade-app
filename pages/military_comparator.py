@@ -209,7 +209,7 @@ else:
             st.plotly_chart(fig_pie_pl, use_container_width=True)
 
     # -------- HS4 LEGEND --------
- st.markdown("#### HS4 Code Descriptions (Color Matched)")
+st.markdown("#### HS4 Code Descriptions (Color Matched)")
 
 # --- safely extract colors from the actual pie ---
 color_map = {}
