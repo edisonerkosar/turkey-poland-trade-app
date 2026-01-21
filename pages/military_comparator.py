@@ -8,33 +8,45 @@ st.set_page_config(layout="wide")
 st.title("Turkey – EU Military Trade Comparator (2013–2024)")
 
 @st.cache_data
-@st.cache_data
 def load_military_data():
     base = os.path.dirname(__file__)
     path = os.path.join(base, "..", "data", "Rebuilt_Military_Trade_EU.xlsx")
 
     df = pd.read_excel(path, engine="openpyxl")
 
-    # Rename columns to match app logic
+    st.write("DEBUG – Columns in raw file:")
+    st.write(df.columns)
+
+    # Try to auto-detect trade value column
+    value_col = None
+
+    for col in df.columns:
+        if "Trade" in col and "Value" in col:
+            value_col = col
+
+    if value_col is None:
+        st.error("Could not detect trade value column in dataset")
+        st.stop()
+
     df = df.rename(columns={
         "Reporter": "Country",
         "Commodity Code": "HS6",
-        "Trade Value (US$)": "Final_Value"
+        value_col: "Final_Value"
     })
 
-    # Create HS4 and HS2 levels
+    # Create HS levels
     df["HS6"] = df["HS6"].astype(str).str.zfill(6)
     df["HS4"] = df["HS6"].str[:4]
     df["HS2"] = df["HS6"].str[:2]
 
-    # Create dummy columns to keep existing app logic happy
+    # Create compatibility columns
     df["Turkey_Reported_Value"] = df["Final_Value"]
     df["EU_Reported_Value"] = df["Final_Value"]
     df["Discrepancy"] = 0
 
     return df
 
-
+st.write(df.columns)
 df = load_military_data()
 st.write("DEBUG – Actual dataset columns:")
 st.write(df.columns)
