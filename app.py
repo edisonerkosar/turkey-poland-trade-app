@@ -13,7 +13,7 @@ st.title("Turkey–Poland Trade Explorer (2013–2024)")
 @st.cache_data(ttl=3600)
 def load_data():
     base = os.path.dirname(__file__)
-    path = os.path.join(base, "data", "Unified_Trade_CLEAN_v2.xlsx")
+    path = os.path.join(base, "data", "Unified_Trade_CLEAN_rebuilt.xlsx")
 
     df = pd.read_excel(path, engine="openpyxl")
 
@@ -277,6 +277,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
