@@ -21,7 +21,11 @@ def load_military_data():
     return df
 
 df = load_military_data()
+st.write("DEBUG – Actual dataset columns:")
+st.write(df.columns)
 
+st.write("DEBUG – First rows:")
+st.write(df.head())
 st.sidebar.header("Filters")
 
 country = st.sidebar.selectbox(
