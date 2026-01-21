@@ -98,7 +98,7 @@ if selected == "Home":
     This application was developed as part of research on Turkey–Poland trade relations.  
     Data reflects officially reported trade flows from UN Comtrade.
     """)
-st.sidebar.page_link("military_comparator.py", label="Military Trade Comparator")
+st.sidebar.page_link("pages/military_comparator.py", label="Military Trade Comparator")
 # ---- Define code variable if something is selected ----
 if selected != "Home":
     code = selected.split(" – ")[0]
@@ -269,6 +269,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
