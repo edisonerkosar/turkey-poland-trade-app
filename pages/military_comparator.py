@@ -8,17 +8,32 @@ st.set_page_config(layout="wide")
 st.title("Turkey – EU Military Trade Comparator (2013–2024)")
 
 @st.cache_data
+@st.cache_data
 def load_military_data():
     base = os.path.dirname(__file__)
     path = os.path.join(base, "..", "data", "Rebuilt_Military_Trade_EU.xlsx")
 
     df = pd.read_excel(path, engine="openpyxl")
 
+    # Rename columns to match app logic
+    df = df.rename(columns={
+        "Reporter": "Country",
+        "Commodity Code": "HS6",
+        "Trade Value (US$)": "Final_Value"
+    })
+
+    # Create HS4 and HS2 levels
     df["HS6"] = df["HS6"].astype(str).str.zfill(6)
-    df["HS4"] = df["HS4"].astype(str).str.zfill(4)
-    df["HS2"] = df["HS2"].astype(str).str.zfill(2)
+    df["HS4"] = df["HS6"].str[:4]
+    df["HS2"] = df["HS6"].str[:2]
+
+    # Create dummy columns to keep existing app logic happy
+    df["Turkey_Reported_Value"] = df["Final_Value"]
+    df["EU_Reported_Value"] = df["Final_Value"]
+    df["Discrepancy"] = 0
 
     return df
+
 
 df = load_military_data()
 st.write("DEBUG – Actual dataset columns:")
