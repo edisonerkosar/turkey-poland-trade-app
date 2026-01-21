@@ -46,7 +46,6 @@ def load_military_data():
 
     return df
 
-st.write(df.columns)
 df = load_military_data()
 st.write("DEBUG – Actual dataset columns:")
 st.write(df.columns)
