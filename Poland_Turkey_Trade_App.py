@@ -71,7 +71,7 @@ direction = st.sidebar.selectbox(
     ["Turkey to Poland", "Poland to Turkey"]
 )
 
-st.sidebar.page_link("pages/military_comparator.py", label="Military Trade Comparator")
+st.sidebar.page_link("pages/Military_Comparator.py", label="Military Trade Comparator")
 
 direction_key = direction.replace(" ", "_")
 data = df[df["Direction"] == direction_key]
@@ -277,6 +277,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
