@@ -101,7 +101,7 @@ if selected == "Home":
     
     st.markdown("""
     **About this tool:**  
-    This application was developed as part of research on Turkey–Poland trade relations.  
+    This application was developed as part of Master's thesis research on decision support systems, basing on the Turkey–Poland trade relations.  
     Data reflects officially reported trade flows from UN Comtrade.
     """)
 
@@ -293,6 +293,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
