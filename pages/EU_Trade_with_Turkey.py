@@ -200,13 +200,14 @@ else:
         matrix,
         x="Size",
         y="CAGR",
-        size="Size",
+        size=np.sqrt(matrix["Size"]),
         color="Country",
         hover_name="Country",
         labels={
             "Size": f"Trade Volume in {latest_year} (USD)",
             "CAGR": "CAGR % (2013–2024)"
-        }
+        },
+        size_max=45
     )
 
     # Highlight Poland
