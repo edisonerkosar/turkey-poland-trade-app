@@ -99,7 +99,7 @@ else:  # Total Trade Volume
 # ---------- TITLES ----------
 if metric == "Total Trade Volume":
     main_title = "Trade Volume of Turkey with EU Countries Over Time"
-    cagr_title = "CAGR of Total Trade with Turkey (2013–2024)"
+    _title = "CAGR of Total Trade with Turkey (2013–2024)"
 elif metric == "Exports to Turkey from EU":
     main_title = "EU Exports to Turkey Over Time"
     cagr_title = "CAGR of Exports to Turkey by Country (2013–2024)"
@@ -161,7 +161,7 @@ for c in ts["Country"].unique():
     years = end_row["Year"] - start_row["Year"]
 
     if years > 0:
-        cagr = (end / start) ** (1 / years) - 1
+        cagr = ((end / start) ** (1 / years) - 1) * 100
         cagr_list.append({"Country": c, "CAGR": cagr})
 
 cagr_df = pd.DataFrame(cagr_list)
@@ -172,11 +172,14 @@ else:
     cagr_df = cagr_df.sort_values("CAGR", ascending=False)
 
     fig_cagr = px.bar(
-        cagr_df,
-        x="Country",
-        y="CAGR",
-        labels={"CAGR": "CAGR (2013–2024)"}
-    )
+    cagr_df,
+    x="Country",
+    y="CAGR",
+    labels={"CAGR": "CAGR % (2013–2024)"}
+)
+    fig_cagr.update_layout(
+    yaxis_tickformat=".1f"
+)
     st.plotly_chart(fig_cagr, width="stretch")
 
 # ---------- FOCUS COUNTRY ----------
