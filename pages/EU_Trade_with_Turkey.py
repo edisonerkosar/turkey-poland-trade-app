@@ -204,7 +204,7 @@ lo, hi = log.quantile([0.05, 0.95])
 log_clipped = log.clip(lo, hi)
 
 matrix["SizeScaled"] = (log_clipped - lo) / (hi - lo) * 40 + 10
-    else:
+else:
     fig_matrix = px.scatter(
     matrix,
     x="Size",
