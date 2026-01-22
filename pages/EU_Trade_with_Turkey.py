@@ -177,6 +177,53 @@ else:
 )
     st.plotly_chart(fig_cagr, width="stretch")
 
+# ================= GROWTH vs SIZE MATRIX =================
+st.subheader("Growth vs Size Matrix (EU–Turkey Trade)")
+
+latest_year = 2024
+
+# ---- SIZE: latest trade volume ----
+size_df = (
+    ts[ts["Year"] == latest_year]
+    .groupby("Country", as_index=False)["Value"]
+    .sum()
+    .rename(columns={"Value": "Size"})
+)
+
+# ---- MERGE with CAGR ----
+matrix = pd.merge(size_df, cagr_df, on="Country", how="inner")
+
+if matrix.empty:
+    st.warning("Not enough data to build Growth vs Size matrix.")
+else:
+    fig_matrix = px.scatter(
+        matrix,
+        x="Size",
+        y="CAGR",
+        size="Size",
+        color="Country",
+        hover_name="Country",
+        labels={
+            "Size": f"Trade Volume in {latest_year} (USD)",
+            "CAGR": "CAGR % (2013–2024)"
+        }
+    )
+
+    # Highlight Poland
+    for trace in fig_matrix.data:
+        if trace.name == "Poland":
+            trace.update(marker=dict(size=20, line=dict(width=3, color="black")))
+        else:
+            trace.update(marker=dict(opacity=0.6))
+
+    fig_matrix.update_layout(
+        xaxis_title=f"Trade Volume in {latest_year} (USD)",
+        yaxis_title="CAGR % (2013–2024)",
+        legend_title_text="EU Country"
+    )
+
+    st.plotly_chart(fig_matrix, width="stretch")
+
 # ---------- FOCUS COUNTRY ----------
 st.subheader(f"{focus_country} – Trade Over Time")
 
