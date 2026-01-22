@@ -211,7 +211,7 @@ else:
         size="SizeScaled",
         color="Country",
         hover_name="Country",
-        size_max=50,
+        size_max=40,
         labels={
             "Size": f"Trade Volume in {latest_year} (USD)",
             "CAGR": "CAGR % (2013–2024)"
