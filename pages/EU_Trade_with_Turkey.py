@@ -63,27 +63,26 @@ compare_poland = st.sidebar.toggle(
     disabled=(focus_country == "Poland")
 )
 
-# ---------- SELECT MEASURE ----------
-if metric == "Exports to Turkey from EU":
+    # ---------- SELECT MEASURE ----------
+    if metric == "Exports to Turkey from EU":
     data = df[df["Direction"] == "EU_to_TR"]
 
-elif metric == "Exports to EU from Turkey":
+    elif metric == "Exports to EU from Turkey":
     data = df[df["Direction"] == "TR_to_EU"]
 
-else:  # Total Trade Volume
-
+    else:  # Total Trade Volume
     pivot = (
-    df.groupby(["Year", "Country", "Direction"])["Value"]
-    .sum()
-    .unstack(fill_value=0)
-    .reset_index()
+        df.groupby(["Year", "Country", "Direction"])["Value"]
+        .sum()
+        .unstack(fill_value=0)
+        .reset_index()
     )
 
-    # Ensure both columns exist
+    # Ensure both columns always exist
     if "EU_to_TR" not in pivot.columns:
-    pivot["EU_to_TR"] = 0
+        pivot["EU_to_TR"] = 0
     if "TR_to_EU" not in pivot.columns:
-    pivot["TR_to_EU"] = 0
+        pivot["TR_to_EU"] = 0
 
     pivot["Value"] = pivot["EU_to_TR"] + pivot["TR_to_EU"]
     data = pivot[["Year", "Country", "Value"]]
@@ -103,7 +102,7 @@ else:  # Total Trade Volume
 if metric == "Total Trade Volume":
     main_title = "Trade Volume of Turkey with EU Countries Over Time"
     cagr_title = "CAGR of Total Trade with Turkey (2013–2024)"
-elif metric == "Imports to Turkey from EU":
+elif metric == "Exports to Turkey from EU":
     main_title = "EU Exports to Turkey Over Time"
     cagr_title = "CAGR of Exports to Turkey by Country (2013–2024)"
 else:
