@@ -196,7 +196,7 @@ fig2 = px.line(
 
 if compare_poland and focus_country != "Poland":
     poland_ts = (
-        data[data["Importer"] == "Poland"]
+        data[data["Country"] == "Poland"]
         .groupby("Year", as_index=False)["Value"]
         .sum()
     )
