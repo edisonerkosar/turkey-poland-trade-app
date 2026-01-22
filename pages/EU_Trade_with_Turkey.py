@@ -10,11 +10,6 @@ st.title("Turkey ↔ EU Total Trade (2013–2024)")
 # ---------- LOAD ----------
 @st.cache_data
 def load_trade():
-    st.write("DEBUG – first rows")
-    st.write(df.head())
-
-    st.write("DEBUG – columns")
-    st.write(df.columns)
     base = os.path.dirname(__file__)
     path = os.path.join(base, "..", "data", "EU-TR_trade.xlsx")
 
@@ -35,7 +30,11 @@ def load_trade():
     return df
 
 df = load_trade()
+st.write("DEBUG – first rows")
+st.write(df.head())
 
+st.write("DEBUG – columns")
+st.write(df.columns)
 ALL_YEARS = list(range(2013, 2025))
 
 # ---------- SIDEBAR ----------
