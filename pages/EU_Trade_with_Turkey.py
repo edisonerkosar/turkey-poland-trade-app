@@ -189,40 +189,40 @@ size_df = (
     .sum()
     .rename(columns={"Value": "Size"})
 )
+
 # ---- MERGE SIZE + CAGR ----
 matrix = size_df.merge(cagr_df, on="Country", how="inner")
 
 if matrix.empty:
     st.warning("Not enough data to build Growth vs Size matrix.")
-    st.stop()
-
-# ---- smart bubble scaling (boost small, compress big) ----
-raw = matrix["Size"].astype(float)
-
-log = np.log10(raw + 1)
-lo, hi = log.quantile([0.05, 0.95])
-log_clipped = log.clip(lo, hi)
-
-matrix["SizeScaled"] = (log_clipped - lo) / (hi - lo) * 40 + 10
 else:
+    # ---- smart bubble scaling (boost small, compress big) ----
+    raw = matrix["Size"].astype(float)
+
+    log = np.log10(raw + 1)
+    lo, hi = log.quantile([0.05, 0.95])
+    log_clipped = log.clip(lo, hi)
+
+    matrix["SizeScaled"] = (log_clipped - lo) / (hi - lo) * 40 + 10
+
     fig_matrix = px.scatter(
-    matrix,
-    x="Size",
-    y="CAGR",
-    size="SizeScaled",
-    color="Country",
-    hover_name="Country",
-    size_max=50,
-    labels={
-        "Size": f"Trade Volume in {latest_year} (USD)",
-        "CAGR": "CAGR % (2013–2024)"
-    }
-)
+        matrix,
+        x="Size",
+        y="CAGR",
+        size="SizeScaled",
+        color="Country",
+        hover_name="Country",
+        size_max=50,
+        labels={
+            "Size": f"Trade Volume in {latest_year} (USD)",
+            "CAGR": "CAGR % (2013–2024)"
+        }
+    )
 
     # Highlight Poland
     for trace in fig_matrix.data:
         if trace.name == "Poland":
-            trace.update(marker=dict(size=20, line=dict(width=3, color="black")))
+            trace.update(marker=dict(size=22, line=dict(width=3, color="black")))
         else:
             trace.update(marker=dict(opacity=0.6))
 
@@ -234,6 +234,7 @@ else:
 
     fig_matrix.update_xaxes(type="log")
     st.plotly_chart(fig_matrix, width="stretch")
+
 
 # ---------- FOCUS COUNTRY ----------
 st.subheader(f"{focus_country} – Trade Over Time")
