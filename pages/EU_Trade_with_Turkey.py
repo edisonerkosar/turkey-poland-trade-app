@@ -154,7 +154,22 @@ for c in ts["Country"].unique():
 
     cagr_list.append({"Country": c, "CAGR": cagr})
 
-cagr_df = pd.DataFrame(cagr_list).dropna().sort_values("CAGR", ascending=False)
+cagr_df = pd.DataFrame(cagr_list)
+
+if cagr_df.empty or "CAGR" not in cagr_df.columns:
+    st.warning("Not enough data to calculate CAGR for this selection.")
+    st.stop()
+
+cagr_df = (
+    cagr_df
+    .dropna(subset=["CAGR"])
+    .sort_values("CAGR", ascending=False)
+)
+
+if cagr_df.empty:
+    st.warning("Not enough data to calculate CAGR for this selection.")
+    st.stop()
+
 
 fig_cagr = px.bar(
     cagr_df,
