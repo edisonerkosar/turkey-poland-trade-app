@@ -222,6 +222,8 @@ else:
         legend_title_text="EU Country"
     )
 
+    fig_matrix.update_xaxes(type="log")
+
     st.plotly_chart(fig_matrix, width="stretch")
 
 # ---------- FOCUS COUNTRY ----------
