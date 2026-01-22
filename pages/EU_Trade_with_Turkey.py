@@ -191,7 +191,8 @@ size_df = (
 )
 
 # ---- MERGE with CAGR ----
-raw = matrix["Size"].astype(float)
+# --- smart bubble scaling (boost small, compress big) ---
+raw = bubble_df["Size"].astype(float)
 
 log = np.log10(raw + 1)
 
@@ -199,7 +200,7 @@ lo, hi = log.quantile([0.05, 0.95])
 
 log_clipped = log.clip(lo, hi)
 
-matrix["SizeScaled"] = (
+bubble_df["SizeScaled"] = (
     (log_clipped - lo) / (hi - lo) * 40 + 10
 )
 if matrix.empty:
