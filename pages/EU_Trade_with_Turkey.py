@@ -50,7 +50,8 @@ metric = st.sidebar.selectbox(
 )
 
 countries = sorted(
-    pd.concat([df["Importer"], df["Exporter"]]).unique()
+    df.loc[~df["Importer"].str.lower().isin(TURKEY_NAMES), "Importer"]
+    .unique()
 )
 
 focus_country = st.sidebar.selectbox(
@@ -66,15 +67,17 @@ compare_poland = st.sidebar.toggle(
 )
 
 # ---------- SELECT MEASURE ----------
+TURKEY_NAMES = ["türkiye", "turkey"]
+
 if metric == "Exports to Turkey from EU":
-    data = df[df["Importer"].str.lower() == "turkey"]
+    data = df[df["Importer"].str.lower().isin(TURKEY_NAMES)]
 
 elif metric == "Exports to EU from Turkey":
-    data = df[df["Exporter"].str.lower() == "turkey"]
+    data = df[df["Exporter"].str.lower().isin(TURKEY_NAMES)]
 
 else:  # Total Trade Volume
-    eu_to_tr = df[df["Importer"].str.lower() == "turkey"]
-    tr_to_eu = df[df["Exporter"].str.lower() == "turkey"]
+    eu_to_tr = df[df["Importer"].str.lower().isin(TURKEY_NAMES)]
+    tr_to_eu = df[df["Exporter"].str.lower().isin(TURKEY_NAMES)]
 
     merged = pd.concat([eu_to_tr, tr_to_eu], ignore_index=True)
 
