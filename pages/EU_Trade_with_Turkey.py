@@ -181,7 +181,7 @@ else:
 st.subheader(f"{focus_country} – Trade Over Time")
 
 focus_ts = (
-    data[data["Importer"] == focus_country]
+    data[data["Country"] == focus_country]
     .groupby("Year", as_index=False)["Value"]
     .sum()
 )
