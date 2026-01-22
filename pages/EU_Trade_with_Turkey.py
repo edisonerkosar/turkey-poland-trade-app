@@ -191,12 +191,16 @@ size_df = (
 )
 
 # ---- MERGE with CAGR ----
-matrix = pd.merge(size_df, cagr_df, on="Country", how="inner")
-min_v = matrix["Size"].min()
-max_v = matrix["Size"].max()
+raw = matrix["Size"].astype(float)
+
+log = np.log10(raw + 1)
+
+lo, hi = log.quantile([0.05, 0.95])
+
+log_clipped = log.clip(lo, hi)
 
 matrix["SizeScaled"] = (
-    (matrix["Size"] - min_v) / (max_v - min_v) * 40 + 8
+    (log_clipped - lo) / (hi - lo) * 40 + 10
 )
 if matrix.empty:
     st.warning("Not enough data to build Growth vs Size matrix.")
@@ -208,11 +212,11 @@ else:
     size="SizeScaled",
     color="Country",
     hover_name="Country",
+    size_max=50,
     labels={
         "Size": f"Trade Volume in {latest_year} (USD)",
         "CAGR": "CAGR % (2013–2024)"
-    },
-    size_max=50
+    }
 )
 
     # Highlight Poland
