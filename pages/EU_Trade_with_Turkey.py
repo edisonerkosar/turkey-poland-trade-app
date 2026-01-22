@@ -223,7 +223,7 @@ else:
     )
 
     fig_matrix.update_xaxes(type="log")
-
+    st.plotly_chart(fig_matrix, width="stretch")
 
 # ---------- FOCUS COUNTRY ----------
 st.subheader(f"{focus_country} – Trade Over Time")
