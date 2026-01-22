@@ -12,30 +12,28 @@ st.title("Turkey ↔ EU Total Trade (2013–2024)")
 def load_trade():
     base = os.path.dirname(__file__)
     path = os.path.join(base, "..", "data", "EU-TR_trade.xlsx")
+
     df = pd.read_excel(path)
 
-    # EU → Turkey (A–E)
-    eu_tr = df.iloc[:, 0:5]
-    eu_tr.columns = ["Year", "Country", "Flow", "Partner", "Value"]
+    df = df.rename(columns={
+        "refYear": "Year",
+        "Importer": "Importer",
+        "Exporter": "Exporter",
+        "primaryValue": "Value"
+    })
 
-    # Turkey → EU (G–K)
-    tr_eu = df.iloc[:, 6:11]
-    tr_eu.columns = ["Year", "Country", "Flow", "Partner", "Value"]
+    df["Year"] = df["Year"].astype(int)
+    df["Importer"] = df["Importer"].astype(str)
+    df["Exporter"] = df["Exporter"].astype(str)
+    df["Value"] = pd.to_numeric(df["Value"], errors="coerce").fillna(0)
 
-    eu_tr["Direction"] = "EU_to_TR"
-    tr_eu["Direction"] = "TR_to_EU"
+    # Remove any Turkey/Türkiye self rows
+    df = df[~df["Importer"].str.lower().isin(["turkey", "türkiye"])]
+    df = df[~df["Exporter"].str.lower().isin(["turkey", "türkiye"])]
 
-    full = pd.concat([eu_tr, tr_eu], ignore_index=True)
-    full = full[full["Country"].str.lower() != "turkey"]
-    full = full[full["Country"].str.lower() != "türkiye"]
-
-    full["Year"] = full["Year"].astype(int)
-    full["Value"] = pd.to_numeric(full["Value"], errors="coerce").fillna(0)
-
-    return full
+    return df
 
 df = load_trade()
-
 ALL_YEARS = list(range(2013, 2025))
 
 # ---------- SIDEBAR ----------
@@ -50,7 +48,7 @@ metric = st.sidebar.selectbox(
     ]
 )
 
-countries = sorted(df["Country"].unique())
+countries = sorted(df["Importer"].unique())
 focus_country = st.sidebar.selectbox(
     "Focus Country",
     countries,
@@ -63,42 +61,27 @@ compare_poland = st.sidebar.toggle(
     disabled=(focus_country == "Poland")
 )
 
-    # ---------- SELECT MEASURE ----------
+# ---------- SELECT MEASURE ----------
 if metric == "Exports to Turkey from EU":
-    data = df[df["Direction"] == "EU_to_TR"]
+    # EU exporter → Turkey importer
+    data = df[(df["Importer"] == "Turkey")]
 
 elif metric == "Exports to EU from Turkey":
-    data = df[df["Direction"] == "TR_to_EU"]
+    # Turkey exporter → EU importer
+    data = df[(df["Exporter"] == "Turkey")]
 
 else:  # Total Trade Volume
-    pivot = (
-        df.groupby(["Year", "Country", "Direction"])["Value"]
+    eu_to_tr = df[df["Importer"] == "Turkey"]
+    tr_to_eu = df[df["Exporter"] == "Turkey"]
+
+    merged = pd.concat([eu_to_tr, tr_to_eu], ignore_index=True)
+
+    data = (
+        merged.groupby(["Year", "Importer"], as_index=False)["Value"]
         .sum()
-        .unstack(fill_value=0)
-        .reset_index()
     )
 
-    # Ensure both columns always exist
-    if "EU_to_TR" not in pivot.columns:
-        pivot["EU_to_TR"] = 0
-    if "TR_to_EU" not in pivot.columns:
-        pivot["TR_to_EU"] = 0
-
-    pivot["Value"] = pivot["EU_to_TR"] + pivot["TR_to_EU"]
-    data = pivot[["Year", "Country", "Value"]]
-
-    # Ensure both columns always exist
-    if "EU_to_TR" not in pivot.columns:
-        pivot["EU_to_TR"] = 0
-    if "TR_to_EU" not in pivot.columns:
-        pivot["TR_to_EU"] = 0
-
-    pivot["Value"] = pivot["EU_to_TR"] + pivot["TR_to_EU"]
-
-    data = pivot[["Year", "Country", "Value"]]
-
-
-# ---------- TIME SERIES (ALL COUNTRIES) ----------
+# ---------- TITLES ----------
 if metric == "Total Trade Volume":
     main_title = "Trade Volume of Turkey with EU Countries Over Time"
     cagr_title = "CAGR of Total Trade with Turkey (2013–2024)"
@@ -111,19 +94,18 @@ else:
 
 st.subheader(main_title)
 
-
+# ---------- TIME SERIES ----------
 ts = (
-    data.groupby(["Year", "Country"], as_index=False)["Value"]
+    data.groupby(["Year", "Importer"], as_index=False)["Value"]
     .sum()
-    .sort_values(["Country", "Year"])
+    .sort_values(["Importer", "Year"])
 )
-
 
 fig = px.line(
     ts,
     x="Year",
     y="Value",
-    color="Country",
+    color="Importer",
     labels={"Value": "Trade Value (USD)", "Year": "Year"}
 )
 
@@ -150,51 +132,47 @@ st.subheader(cagr_title)
 
 cagr_list = []
 
-for c in ts["Country"].unique():
-    sub = ts[ts["Country"] == c].sort_values("Year")
+for c in ts["Importer"].unique():
+    sub = ts[ts["Importer"] == c].sort_values("Year")
 
-    start = sub[sub["Year"] == 2013]["Value"].sum()
-    end = sub[sub["Year"] == 2024]["Value"].sum()
+    nonzero = sub[sub["Value"] != 0]
+    if len(nonzero) < 2:
+        continue
 
-    if start > 0:
-        years = 2024 - 2013
-        cagr = (end / start) ** (1 / years) - 1
-    else:
-        cagr = np.nan
+    start_row = nonzero.iloc[0]
+    end_row = nonzero.iloc[-1]
 
+    start = start_row["Value"]
+    end = end_row["Value"]
+    years = end_row["Year"] - start_row["Year"]
+
+    if years <= 0 or start == 0:
+        continue
+
+    cagr = (end / start) ** (1 / years) - 1
     cagr_list.append({"Country": c, "CAGR": cagr})
 
 cagr_df = pd.DataFrame(cagr_list)
 
-if cagr_df.empty or "CAGR" not in cagr_df.columns:
-    st.warning("Not enough data to calculate CAGR for this selection.")
-    st.stop()
-
-cagr_df = (
-    cagr_df
-    .dropna(subset=["CAGR"])
-    .sort_values("CAGR", ascending=False)
-)
-
 if cagr_df.empty:
     st.warning("Not enough data to calculate CAGR for this selection.")
-    st.stop()
+else:
+    cagr_df = cagr_df.sort_values("CAGR", ascending=False)
 
+    fig_cagr = px.bar(
+        cagr_df,
+        x="Country",
+        y="CAGR",
+        labels={"CAGR": "CAGR (2013–2024)"}
+    )
 
-fig_cagr = px.bar(
-    cagr_df,
-    x="Country",
-    y="CAGR",
-    labels={"CAGR": "CAGR (2013–2024)"}
-)
-
-st.plotly_chart(fig_cagr, width="stretch")
+    st.plotly_chart(fig_cagr, width="stretch")
 
 # ---------- FOCUS COUNTRY ----------
 st.subheader(f"{focus_country} – Trade Over Time")
 
 focus_ts = (
-    data[data["Country"] == focus_country]
+    data[data["Importer"] == focus_country]
     .groupby("Year", as_index=False)["Value"]
     .sum()
 )
@@ -209,7 +187,7 @@ fig2 = px.line(
 
 if compare_poland and focus_country != "Poland":
     poland_ts = (
-        data[data["Country"] == "Poland"]
+        data[data["Importer"] == "Poland"]
         .groupby("Year", as_index=False)["Value"]
         .sum()
     )
@@ -222,20 +200,13 @@ if compare_poland and focus_country != "Poland":
         line=dict(width=4, dash="dash")
     )
 
-fig.update_layout(
-    legend_title_text="EU Country",
-    legend=dict(
-        itemclick="toggle",        # click to hide/show
-        itemdoubleclick="toggleothers",
-        orientation="v",
-        x=1.02,
-        y=1
-    ),
+fig2.update_layout(
     xaxis=dict(
         tickmode="array",
         tickvals=ALL_YEARS,
         showgrid=True
-    )
+    ),
+    yaxis_title="Trade Value (USD)"
 )
 
 st.plotly_chart(fig2, width="stretch")
