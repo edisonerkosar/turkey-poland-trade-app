@@ -32,11 +32,6 @@ def load_trade():
 
 df = load_trade()
 TURKEY_NAMES = ["türkiye", "turkey"]
-st.write("DEBUG – first rows")
-st.write(df.head())
-
-st.write("DEBUG – columns")
-st.write(df.columns)
 ALL_YEARS = list(range(2013, 2025))
 
 # ---------- SIDEBAR ----------
