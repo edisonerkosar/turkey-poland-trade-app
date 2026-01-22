@@ -4,6 +4,9 @@ import plotly.express as px
 import os
 import numpy as np
 
+st.write(df.head())
+st.write(df.columns)
+
 st.set_page_config(layout="wide")
 st.title("Turkey ↔ EU Total Trade (2013–2024)")
 
