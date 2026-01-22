@@ -10,6 +10,7 @@ st.title("Turkey ↔ EU Total Trade (2013–2024)")
 # ---------- LOAD ----------
 @st.cache_data
 def load_trade():
+    
     base = os.path.dirname(__file__)
     path = os.path.join(base, "..", "data", "EU-TR_trade.xlsx")
 
@@ -30,6 +31,7 @@ def load_trade():
     return df
 
 df = load_trade()
+TURKEY_NAMES = ["türkiye", "turkey"]
 st.write("DEBUG – first rows")
 st.write(df.head())
 
