@@ -73,11 +73,20 @@ elif metric == "Exports to EU from Turkey":
 else:  # Total Trade Volume
 
     pivot = (
-        df.groupby(["Year", "Country", "Direction"])["Value"]
-        .sum()
-        .unstack()
-        .reset_index()
+    df.groupby(["Year", "Country", "Direction"])["Value"]
+    .sum()
+    .unstack(fill_value=0)
+    .reset_index()
     )
+
+    # Ensure both columns exist
+    if "EU_to_TR" not in pivot.columns:
+    pivot["EU_to_TR"] = 0
+    if "TR_to_EU" not in pivot.columns:
+    pivot["TR_to_EU"] = 0
+
+    pivot["Value"] = pivot["EU_to_TR"] + pivot["TR_to_EU"]
+    data = pivot[["Year", "Country", "Value"]]
 
     # Ensure both columns always exist
     if "EU_to_TR" not in pivot.columns:
@@ -107,7 +116,9 @@ st.subheader(main_title)
 ts = (
     data.groupby(["Year", "Country"], as_index=False)["Value"]
     .sum()
+    .sort_values(["Country", "Year"])
 )
+
 
 fig = px.line(
     ts,
