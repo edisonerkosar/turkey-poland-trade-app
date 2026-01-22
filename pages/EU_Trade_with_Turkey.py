@@ -71,20 +71,28 @@ compare_poland = st.sidebar.toggle(
 # ---------- SELECT MEASURE ----------
 TURKEY_NAMES = ["türkiye", "turkey"]
 
+is_tr_importer = df["Importer"].str.lower().isin(TURKEY_NAMES)
+is_tr_exporter = df["Exporter"].str.lower().isin(TURKEY_NAMES)
+
 if metric == "Exports to Turkey from EU":
-    data = df[df["Importer"].str.lower().isin(TURKEY_NAMES)]
+    data = df[is_tr_importer & (~is_tr_exporter)].copy()
+    data["Country"] = data["Exporter"]
 
 elif metric == "Exports to EU from Turkey":
-    data = df[df["Exporter"].str.lower().isin(TURKEY_NAMES)]
+    data = df[is_tr_exporter & (~is_tr_importer)].copy()
+    data["Country"] = data["Importer"]
 
 else:  # Total Trade Volume
-    eu_to_tr = df[df["Importer"].str.lower().isin(TURKEY_NAMES)]
-    tr_to_eu = df[df["Exporter"].str.lower().isin(TURKEY_NAMES)]
+    eu_to_tr = df[is_tr_importer & (~is_tr_exporter)].copy()
+    eu_to_tr["Country"] = eu_to_tr["Exporter"]
 
-    merged = pd.concat([eu_to_tr, tr_to_eu], ignore_index=True)
+    tr_to_eu = df[is_tr_exporter & (~is_tr_importer)].copy()
+    tr_to_eu["Country"] = tr_to_eu["Importer"]
+
+    combined = pd.concat([eu_to_tr, tr_to_eu], ignore_index=True)
 
     data = (
-        merged.groupby(["Year", "Importer"], as_index=False)["Value"]
+        combined.groupby(["Year", "Country"], as_index=False)["Value"]
         .sum()
     )
 
@@ -103,7 +111,7 @@ st.subheader(main_title)
 
 # ---------- TIME SERIES ----------
 ts = (
-    data.groupby(["Year", "Importer"], as_index=False)["Value"]
+    data.groupby(["Year", "Country"], as_index=False)["Value"]
     .sum()
 )
 
@@ -115,7 +123,7 @@ fig = px.line(
     ts,
     x="Year",
     y="Value",
-    color="Importer",
+    color="Country",
     labels={"Value": "Trade Value (USD)", "Year": "Year"}
 )
 
@@ -138,7 +146,7 @@ st.subheader(cagr_title)
 
 cagr_list = []
 
-for c in ts["Importer"].unique():
+for c in ts["Country"].unique():
     sub = ts[ts["Importer"] == c].sort_values("Year")
 
     nonzero = sub[sub["Value"] > 0]
