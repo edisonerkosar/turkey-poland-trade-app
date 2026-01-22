@@ -192,14 +192,7 @@ size_df = (
 
 # ---- MERGE SIZE + CAGR ----
 matrix = size_df.merge(cagr_df, on="Country", how="inner")
-# --- Bubble scaling: boost small, keep big proportional ---
-raw = matrix["Size"].astype(float)
 
-log = np.log10(raw + 1)        # compress extremes
-lo, hi = log.min(), log.max()
-
-scaled = (log - lo) / (hi - lo)  # 0–1
-matrix["SizeScaled"] = scaled * 40 + 12   # visible floor + range
 if matrix.empty:
     st.warning("Not enough data to build Growth vs Size matrix.")
 else:
@@ -208,10 +201,10 @@ else:
         matrix,
         x="Size",
         y="CAGR",
-        size="SizeScaled",
+        size="Size",
         color="Country",
         hover_name="Country",
-        size_max=40,
+        size_max=60,
         labels={
             "Size": f"Trade Volume in {latest_year} (USD)",
             "CAGR": "CAGR % (2013–2024)"
