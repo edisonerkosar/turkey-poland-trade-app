@@ -147,7 +147,7 @@ st.subheader(cagr_title)
 cagr_list = []
 
 for c in ts["Country"].unique():
-    sub = ts[ts["Importer"] == c].sort_values("Year")
+    sub = ts[ts["Country"] == c].sort_values("Year")
 
     nonzero = sub[sub["Value"] > 0]
     if len(nonzero) < 2:
