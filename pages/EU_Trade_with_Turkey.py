@@ -64,7 +64,7 @@ compare_poland = st.sidebar.toggle(
 )
 
     # ---------- SELECT MEASURE ----------
-    if metric == "Exports to Turkey from EU":
+if metric == "Exports to Turkey from EU":
     data = df[df["Direction"] == "EU_to_TR"]
 
     elif metric == "Exports to EU from Turkey":
