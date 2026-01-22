@@ -67,10 +67,10 @@ compare_poland = st.sidebar.toggle(
 if metric == "Exports to Turkey from EU":
     data = df[df["Direction"] == "EU_to_TR"]
 
-    elif metric == "Exports to EU from Turkey":
+elif metric == "Exports to EU from Turkey":
     data = df[df["Direction"] == "TR_to_EU"]
 
-    else:  # Total Trade Volume
+else:  # Total Trade Volume
     pivot = (
         df.groupby(["Year", "Country", "Direction"])["Value"]
         .sum()
