@@ -94,7 +94,7 @@ else:  # Total Trade Volume
 # ---------- TITLES ----------
 if metric == "Total Trade Volume":
     main_title = "Trade Volume of Turkey with EU Countries Over Time"
-    _title = "CAGR of Total Trade with Turkey (2013–2024)"
+    cagr_title = "CAGR of Total Trade with Turkey (2013–2024)"
 elif metric == "Exports to Turkey from EU":
     main_title = "EU Exports to Turkey Over Time"
     cagr_title = "CAGR of Exports to Turkey by Country (2013–2024)"
