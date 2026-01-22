@@ -189,22 +189,21 @@ size_df = (
     .sum()
     .rename(columns={"Value": "Size"})
 )
+# ---- MERGE SIZE + CAGR ----
+matrix = size_df.merge(cagr_df, on="Country", how="inner")
 
-# ---- MERGE with CAGR ----
-# --- smart bubble scaling (boost small, compress big) ---
-raw = bubble_df["Size"].astype(float)
-
-log = np.log10(raw + 1)
-
-lo, hi = log.quantile([0.05, 0.95])
-
-log_clipped = log.clip(lo, hi)
-
-bubble_df["SizeScaled"] = (
-    (log_clipped - lo) / (hi - lo) * 40 + 10
-)
 if matrix.empty:
     st.warning("Not enough data to build Growth vs Size matrix.")
+    st.stop()
+
+# ---- smart bubble scaling (boost small, compress big) ----
+raw = matrix["Size"].astype(float)
+
+log = np.log10(raw + 1)
+lo, hi = log.quantile([0.05, 0.95])
+log_clipped = log.clip(lo, hi)
+
+matrix["SizeScaled"] = (log_clipped - lo) / (hi - lo) * 40 + 10
 else:
     fig_matrix = px.scatter(
     matrix,
