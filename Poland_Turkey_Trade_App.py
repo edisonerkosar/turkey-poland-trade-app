@@ -14,13 +14,29 @@ def load_data():
     path = os.path.join(base, "data", "Unified_Trade_CLEAN_rebuilt.xlsx")
 
     df = pd.read_excel(path, engine="openpyxl")
+    # --- normalize column names ---
+    df.columns = df.columns.str.strip()
 
+    # map possible variants to standard names
+    rename_map = {
+    "HS4 Desc": "HS4Desc",
+    "HS4 description": "HS4Desc",
+    "HS4Description": "HS4Desc",
+    "HS4_desc": "HS4Desc",
+
+    "HS2 Desc": "HS2Desc",
+    "HS2 description": "HS2Desc",
+    "HS2Description": "HS2Desc",
+    "HS2_desc": "HS2Desc",
+    }
+
+    df = df.rename(columns=rename_map)
     df["HS6"] = df["HS6"].astype(str).str.zfill(6)
     df["HS4"] = df["HS4"].astype(str).str.zfill(4)
     df["HS2"] = df["HS2"].astype(str).str.zfill(2)
 
     return df
-
+st.write("COLUMNS:", df.columns.tolist())
 DESC_MAP = {
     "HS6": ["HS6", "HS_Description"],
     "HS4": ["HS4", "HS4Desc"],
@@ -325,6 +341,10 @@ st.markdown(f"**Average category share:** {avg_share:.2f}%")
 # ---- Merge correct descriptions for chosen level ----
 desc_cols = DESC_MAP[level]
 
+if not all(c in df.columns for c in desc_cols):
+    st.error(f"Missing description columns for {level}: {desc_cols}")
+    st.stop()
+
 desc_map = (
     df[desc_cols]
     .drop_duplicates()
@@ -377,6 +397,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
