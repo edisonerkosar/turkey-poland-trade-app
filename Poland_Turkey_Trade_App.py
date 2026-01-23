@@ -21,6 +21,11 @@ def load_data():
 
     return df
 
+DESC_MAP = {
+    "HS6": ["HS6", "HS_Description"],
+    "HS4": ["HS4", "HS4_Description"],
+    "HS2": ["HS2", "HS2_Description"]
+}
 
 def project_series_cagr(df_series):
     df_series = df_series.sort_values("Year")
@@ -275,11 +280,21 @@ pie_year = st.selectbox(
     index=len(sorted(data["Year"].unique())) - 1
 )
 
-pie_data = (
-    data[data["Year"] == pie_year]
-    .groupby(level, as_index=False)["Final_FOB_Value"]
-    .sum()
+pie_data["Label"] = pie_data.apply(
+    lambda r: f"{r[level]} ({r['Share_%']:.1f}%)" if r["Share_%"] >= 1 else "",
+    axis=1
 )
+
+fig_pie = px.pie(
+    pie_data,
+    names="Label",
+    values="Share_%",
+    hole=0.4,
+    title=f"Category Share Structure in {pie_year}"
+)
+
+fig_pie.update_traces(textinfo="label", hovertemplate="%{label}<br>%{value:.2f}%")
+
 
 if pie_data.empty:
     st.warning("No data available for this year.")
@@ -304,7 +319,8 @@ else:
     st.markdown(f"**Average category share:** {avg_share:.2f}%")
 
     # ---- Merge descriptions ----
-    desc_map = options.copy()
+    desc_cols = DESC_MAP[level]
+    desc_map = df[desc_cols].drop_duplicates()
     desc_map.columns = [level, "Description"]
 
     pie_table = pie_data.merge(desc_map, on=level, how="left")
@@ -348,6 +364,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
