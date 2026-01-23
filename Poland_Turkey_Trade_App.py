@@ -265,6 +265,58 @@ fig.update_layout(
 
 st.plotly_chart(fig, width="stretch")
 
+# ================= SHARE STRUCTURE =================
+st.markdown("---")
+st.subheader("Trade Structure – Category Shares")
+
+pie_year = st.selectbox(
+    "Select year for structure",
+    sorted(data["Year"].unique()),
+    index=len(sorted(data["Year"].unique())) - 1
+)
+
+pie_data = (
+    data[data["Year"] == pie_year]
+    .groupby(level, as_index=False)["Final_FOB_Value"]
+    .sum()
+)
+
+if pie_data.empty:
+    st.warning("No data available for this year.")
+else:
+    total = pie_data["Final_FOB_Value"].sum()
+
+    pie_data["Share_%"] = (pie_data["Final_FOB_Value"] / total) * 100
+
+    fig_pie = px.pie(
+        pie_data,
+        names=level,
+        values="Share_%",
+        hole=0.4,
+        title=f"Category Share Structure in {pie_year}",
+        labels={"Share_%": "Share (%)"}
+    )
+
+    st.plotly_chart(fig_pie, use_container_width=True)
+
+    # ---- Average share ----
+    avg_share = pie_data["Share_%"].mean()
+    st.markdown(f"**Average category share:** {avg_share:.2f}%")
+
+    # ---- Merge descriptions ----
+    desc_map = options.copy()
+    desc_map.columns = [level, "Description"]
+
+    pie_table = pie_data.merge(desc_map, on=level, how="left")
+    pie_table = pie_table[[level, "Description", "Share_%"]]
+    pie_table["Share_%"] = pie_table["Share_%"].round(2)
+
+    st.markdown("#### Category Share Table")
+    st.dataframe(
+        pie_table.sort_values("Share_%", ascending=False),
+        use_container_width=True,
+        hide_index=True
+    )
 # ---- DESCRIPTION DISPLAY ----
 if selected != "Home":
     st.subheader("Selected Code Description")
@@ -296,6 +348,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
