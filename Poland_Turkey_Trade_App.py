@@ -34,10 +34,13 @@ def load_data():
     }
 
     df = df.rename(columns=rename_map)
+    for col in ["HS_Description", "HS4Desc", "HS2Desc"]:
+        if col in df.columns:
+            df[col] = df[col].astype(str).fillna("Unknown").str.strip()
+
     df["HS6"] = df["HS6"].astype(str).str.zfill(6)
     df["HS4"] = df["HS4"].astype(str).str.zfill(4)
     df["HS2"] = df["HS2"].astype(str).str.zfill(2)
-
     return df
 
 DESC_MAP = {
@@ -104,17 +107,12 @@ level = st.sidebar.selectbox(
 )
 show_projection = st.sidebar.checkbox("Show Trend Projections to 2030")
 
-if level == "HS6":
-    options = data[["HS6", "HS_Description"]].drop_duplicates()
-    display = options["HS6"] + " – " + options["HS_Description"]
+code_col, desc_col = DESC_MAP[level]
 
-elif level == "HS4":
-    options = data[["HS4", "HS4Desc"]].drop_duplicates()
-    display = options["HS4"] + " – " + options["HS4Desc"]
+options = data[[code_col, desc_col]].drop_duplicates()
+options[desc_col] = options[desc_col].fillna("Unknown").astype(str)
 
-else:  # HS2
-    options = data[["HS2", "HS2Desc"]].drop_duplicates()
-    display = options["HS2"] + " – " + options["HS2Desc"]
+display = options[code_col].astype(str) + " – " + options[desc_col]
 
 
 selected = st.sidebar.selectbox(
@@ -400,6 +398,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
