@@ -14,6 +14,9 @@ def load_data():
     path = os.path.join(base, "data", "Unified_Trade_CLEAN_rebuilt.xlsx")
 
     df = pd.read_excel(path, engine="openpyxl")
+
+    st.write("DEBUG — columns in Excel:")
+    st.write(df.columns.tolist())
     # --- normalize column names ---
     df.columns = df.columns.str.strip()
 
@@ -36,7 +39,7 @@ def load_data():
     df["HS2"] = df["HS2"].astype(str).str.zfill(2)
 
     return df
-st.write("COLUMNS:", df.columns.tolist())
+
 DESC_MAP = {
     "HS6": ["HS6", "HS_Description"],
     "HS4": ["HS4", "HS4Desc"],
@@ -397,6 +400,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
