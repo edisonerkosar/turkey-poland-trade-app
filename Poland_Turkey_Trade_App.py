@@ -23,8 +23,8 @@ def load_data():
 
 DESC_MAP = {
     "HS6": ["HS6", "HS_Description"],
-    "HS4": ["HS4", "HS4_Description"],
-    "HS2": ["HS2", "HS2_Description"]
+    "HS4": ["HS4", "HS4Desc"],
+    "HS2": ["HS2", "HS2Desc"]
 }
 
 def project_series_cagr(df_series):
@@ -90,12 +90,12 @@ if level == "HS6":
     display = options["HS6"] + " – " + options["HS_Description"]
 
 elif level == "HS4":
-    options = data[["HS4", "HS_Description"]].drop_duplicates()
-    display = options["HS4"] + " – " + options["HS_Description"]
+    options = data[["HS4", "HS4Desc"]].drop_duplicates()
+    display = options["HS4"] + " – " + options["HS4Desc"]
 
 else:  # HS2
-    options = data[["HS2", "HS_Description"]].drop_duplicates()
-    display = options["HS2"] + " – " + options["HS_Description"]
+    options = data[["HS2", "HS2Desc"]].drop_duplicates()
+    display = options["HS2"] + " – " + options["HS2Desc"]
 
 
 selected = st.sidebar.selectbox(
@@ -295,27 +295,28 @@ if pie_data.empty:
 total = pie_data["Final_FOB_Value"].sum()
 pie_data["Share_%"] = (pie_data["Final_FOB_Value"] / total) * 100
 
-# ---- Hide labels below 1% ----
-pie_data["Label"] = pie_data.apply(
+# ---- Text only for >=1% ----
+pie_data["Display"] = pie_data.apply(
     lambda r: f"{r[level]} ({r['Share_%']:.1f}%)" if r["Share_%"] >= 1 else "",
     axis=1
 )
 
-# ---- PIE ----
 fig_pie = px.pie(
     pie_data,
-    names="Label",
+    names=level,
     values="Share_%",
     hole=0.4,
     title=f"Category Share Structure in {pie_year}"
 )
 
 fig_pie.update_traces(
-    textinfo="label",
-    hovertemplate="%{label}<br>%{value:.2f}%"
+    text=pie_data["Display"],
+    textinfo="text",
+    hovertemplate=f"{level}: %{{label}}<br>%{{value:.2f}}%"
 )
 
 st.plotly_chart(fig_pie, use_container_width=True)
+
 
 # ---- Average share ----
 avg_share = pie_data["Share_%"].mean()
@@ -323,7 +324,15 @@ st.markdown(f"**Average category share:** {avg_share:.2f}%")
 
 # ---- Merge correct descriptions for chosen level ----
 desc_cols = DESC_MAP[level]
-desc_map = df[desc_cols].drop_duplicates()
+
+desc_map = (
+    df[desc_cols]
+    .drop_duplicates()
+    .groupby(desc_cols[0])[desc_cols[1]]
+    .apply(lambda x: x.iloc[0])
+    .reset_index()
+)
+
 desc_map.columns = [level, "Description"]
 
 pie_table = pie_data.merge(desc_map, on=level, how="left")
@@ -368,6 +377,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
