@@ -82,13 +82,16 @@ show_projection = st.sidebar.checkbox("Show Trend Projections to 2030")
 
 if level == "HS6":
     options = data[["HS6", "HS_Description"]].drop_duplicates()
-    display = options["HS6"].astype(str) + " – " + options["HS_Description"].astype(str)
+    display = options["HS6"] + " – " + options["HS_Description"]
+
 elif level == "HS4":
-    options = data[["HS4", "HS4_Description"]].drop_duplicates()
-    display = options["HS4"] + " – " + options["HS4_Description"]
-else:
-    options = data[["HS2", "HS2_Description"]].drop_duplicates()
-    display = options["HS2"] + " – " + options["HS2_Description"]
+    options = data[["HS4", "HS_Description"]].drop_duplicates()
+    display = options["HS4"] + " – " + options["HS_Description"]
+
+else:  # HS2
+    options = data[["HS2", "HS_Description"]].drop_duplicates()
+    display = options["HS2"] + " – " + options["HS_Description"]
+
 
 selected = st.sidebar.selectbox(
     "Search by Code or Description",
@@ -293,6 +296,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
