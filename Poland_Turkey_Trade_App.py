@@ -318,51 +318,52 @@ st.plotly_chart(
     }
 )
 # ================= SHARE STRUCTURE =================
-st.markdown("---")
-st.subheader("Trade Structure – Category Shares")
+if selected == "Home":
+    st.markdown("---")
+    st.subheader("Trade Structure – Category Shares")
 
-pie_year = st.selectbox(
-    "Select year for structure",
-    sorted(data["Year"].unique()),
-    index=len(sorted(data["Year"].unique())) - 1
-)
+    pie_year = st.selectbox(
+        "Select year for structure",
+        sorted(data["Year"].unique()),
+        index=len(sorted(data["Year"].unique())) - 1
+    )
 
-# ---- Aggregate for selected year ----
-pie_data = (
-    data[data["Year"] == pie_year]
-    .groupby(level, as_index=False)["Final_FOB_Value"]
-    .sum()
-)
+    # ---- Aggregate for selected year ----
+    pie_data = (
+        data[data["Year"] == pie_year]
+        .groupby(level, as_index=False)["Final_FOB_Value"]
+        .sum()
+    )
 
-if pie_data.empty:
-    st.warning("No data available for this year.")
-    st.stop()
+    if pie_data.empty:
+        st.warning("No data available for this year.")
+        st.stop()
 
-# ---- Compute shares ----
-total = pie_data["Final_FOB_Value"].sum()
-pie_data["Share_%"] = (pie_data["Final_FOB_Value"] / total) * 100
+    # ---- Compute shares ----
+    total = pie_data["Final_FOB_Value"].sum()
+    pie_data["Share_%"] = (pie_data["Final_FOB_Value"] / total) * 100
 
-# ---- Text only for >=1% ----
-pie_data["Display"] = pie_data.apply(
-    lambda r: f"{r[level]} ({r['Share_%']:.1f}%)" if r["Share_%"] >= 1 else "",
-    axis=1
-)
+    # ---- Text only for >=1% ----
+    pie_data["Display"] = pie_data.apply(
+        lambda r: f"{r[level]} ({r['Share_%']:.1f}%)" if r["Share_%"] >= 1 else "",
+        axis=1
+    )
 
-fig_pie = px.pie(
-    pie_data,
-    names=level,
-    values="Share_%",
-    hole=0.4,
-    title=f"Category Share Structure in {pie_year}"
-)
+    fig_pie = px.pie(
+        pie_data,
+        names=level,
+        values="Share_%",
+        hole=0.4,
+        title=f"Category Share Structure in {pie_year}"
+    )
 
-fig_pie.update_traces(
-    text=pie_data["Display"],
-    textinfo="text",
-    hovertemplate=f"{level}: %{{label}}<br>%{{value:.2f}}%"
-)
+    fig_pie.update_traces(
+        text=pie_data["Display"],
+        textinfo="text",
+        hovertemplate=f"{level}: %{{label}}<br>%{{value:.2f}}%"
+    )
 
-st.plotly_chart(
+    st.plotly_chart(
         fig_pie,
         use_container_width=True,
         config={
@@ -374,40 +375,40 @@ st.plotly_chart(
                 "height": 800,
                 "width": 1200,
                 "scale": 3
+            }
         }
-    }
-)
-# ---- Average share ----
-avg_share = pie_data["Share_%"].mean()
-st.markdown(f"**Average category share:** {avg_share:.2f}%")
+    )
+    # ---- Average share ----
+    avg_share = pie_data["Share_%"].mean()
+    st.markdown(f"**Average category share:** {avg_share:.2f}%")
 
-# ---- Merge correct descriptions for chosen level ----
-desc_cols = DESC_MAP[level]
+    # ---- Merge correct descriptions for chosen level ----
+    desc_cols = DESC_MAP[level]
 
-if not all(c in df.columns for c in desc_cols):
-    st.error(f"Missing description columns for {level}: {desc_cols}")
-    st.stop()
+    if not all(c in df.columns for c in desc_cols):
+        st.error(f"Missing description columns for {level}: {desc_cols}")
+        st.stop()
 
-desc_map = (
-    df[desc_cols]
-    .drop_duplicates()
-    .groupby(desc_cols[0])[desc_cols[1]]
-    .apply(lambda x: x.iloc[0])
-    .reset_index()
-)
+    desc_map = (
+        df[desc_cols]
+        .drop_duplicates()
+        .groupby(desc_cols[0])[desc_cols[1]]
+        .apply(lambda x: x.iloc[0])
+        .reset_index()
+    )
 
-desc_map.columns = [level, "Description"]
+    desc_map.columns = [level, "Description"]
 
-pie_table = pie_data.merge(desc_map, on=level, how="left")
-pie_table = pie_table[[level, "Description", "Share_%"]]
-pie_table["Share_%"] = pie_table["Share_%"].round(2)
+    pie_table = pie_data.merge(desc_map, on=level, how="left")
+    pie_table = pie_table[[level, "Description", "Share_%"]]
+    pie_table["Share_%"] = pie_table["Share_%"].round(2)
 
-st.markdown("#### Category Share Table")
-st.dataframe(
-    pie_table.sort_values("Share_%", ascending=False),
-    use_container_width=True,
-    hide_index=True
-)
+    st.markdown("#### Category Share Table")
+    st.dataframe(
+        pie_table.sort_values("Share_%", ascending=False),
+        use_container_width=True,
+        hide_index=True
+    )
 
 # ---- DESCRIPTION DISPLAY ----
 if selected != "Home":
@@ -440,6 +441,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
