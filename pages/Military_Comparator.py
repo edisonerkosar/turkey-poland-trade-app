@@ -15,13 +15,7 @@ EXPORT_CONFIG = {
         "scale": 3
     }
 }
-base_palette = px.colors.qualitative.Set2
-unique_codes = sorted(df["cmdCode"].unique())
 
-HS_COLORS = {
-    code: base_palette[i % len(base_palette)]
-    for i, code in enumerate(unique_codes)
-}
 st.set_page_config(layout="wide")
 st.title("Turkey → EU Military Trade Comparator (HS Codes, 2013–2024)")
 
@@ -39,7 +33,14 @@ def load_military_data():
     return df
 
 df = load_military_data()
+# ---------- DYNAMIC COLOR MAP FOR ALL HS CODES ----------
+base_palette = px.colors.qualitative.Set2
+unique_codes = sorted(df["cmdCode"].unique())
 
+HS_COLORS = {
+    code: base_palette[i % len(base_palette)]
+    for i, code in enumerate(unique_codes)
+}
 ALL_YEARS = list(range(2013, 2025))
 
 # ---------- HS4 MAP ----------
@@ -260,7 +261,8 @@ else:
                 names="cmdCode",
                 values="primaryValue",
                 hole=0.4,
-                color="cmdCode"
+                color="cmdCode",
+                color_discrete_map=HS_COLORS
             )
             fig_pie.update_layout(
                 title=dict(
@@ -311,7 +313,7 @@ else:
 
     for code, desc in hs_map.items():
         if code in active_codes:
-            color = HS4_COLORS.get(code, "#FFFFFF")
+            color = HS_COLORS.get(code, "#FFFFFF")
             st.markdown(
                 f"<span style='color:{color}; font-weight:600'>{code}</span> – {desc}",
                 unsafe_allow_html=True
