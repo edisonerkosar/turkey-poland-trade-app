@@ -134,6 +134,15 @@ fig = px.line(
     labels={"Value": "Trade Value (USD)", "Year": "Year"}
 )
 
+fig.update_layout(
+    title=dict(
+        text=main_title,
+        x=0.5,
+        xanchor="center",
+        font=dict(size=20)
+    )
+)
+
 for trace in fig.data:
     if trace.name == "Poland":
         trace.update(line=dict(width=5))
@@ -188,9 +197,15 @@ else:
     y="CAGR",
     labels={"CAGR": "CAGR % (2013–2024)"}
 )
+
     fig_cagr.update_layout(
-    yaxis_tickformat=".1f"
-)
+        title=dict(
+            text=cagr_title,
+            x=0.5,
+            xanchor="center",
+            font=dict(size=18)
+        )
+    )
     
     st.plotly_chart(
     fig_cagr,
@@ -240,6 +255,12 @@ else:
             trace.update(marker=dict(opacity=0.6))
 
     fig_matrix.update_layout(
+        title=dict(
+            text="Growth vs Size Matrix (EU–Turkey Trade)",
+            x=0.5,
+            xanchor="center",
+            font=dict(size=18)
+        ),
         xaxis_title=f"Trade Volume in {latest_year} (USD)",
         yaxis_title="CAGR % (2013–2024)",
         legend_title_text="EU Country"
@@ -267,8 +288,16 @@ fig2 = px.line(
     focus_ts,
     x="Year",
     y="Value",
-    labels={"Value": "Trade Value (USD)", "Year": "Year"},
-    title=focus_country
+    labels={"Value": "Trade Value (USD)", "Year": "Year"}
+)
+
+fig2.update_layout(
+    title=dict(
+        text=f"{focus_country} – Trade Over Time",
+        x=0.5,
+        xanchor="center",
+        font=dict(size=18)
+    )
 )
 
 if compare_poland and focus_country != "Poland":
