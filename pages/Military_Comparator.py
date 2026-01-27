@@ -3,6 +3,17 @@ import pandas as pd
 import plotly.express as px
 import os
 
+EXPORT_CONFIG = {
+    "displaylogo": False,
+    "modeBarButtonsToAdd": ["toImage"],
+    "toImageButtonOptions": {
+        "format": "svg",
+        "filename": "military_trade_chart",
+        "height": 800,
+        "width": 1200,
+        "scale": 3
+    }
+}
 st.set_page_config(layout="wide")
 st.title("Turkey → EU Military Trade Comparator (HS4, 2013–2024)")
 
@@ -102,8 +113,11 @@ if view_mode == "Home (EU Comparison)":
         yaxis=dict(showgrid=True, gridcolor="rgba(255,255,255,0.08)")
     )
 
-    st.plotly_chart(fig, width="stretch")
-
+    st.plotly_chart(
+        fig,
+        use_container_width=True,
+        config=EXPORT_CONFIG
+    )
     # ----- RANKING -----
     rank_year = st.selectbox(
         "Ranking Year",
@@ -127,8 +141,11 @@ if view_mode == "Home (EU Comparison)":
         labels={"primaryValue": "Trade Value (USD)"}
     )
 
-    st.plotly_chart(fig_rank, width="stretch")
-
+    st.plotly_chart(
+        fig_rank,
+        use_container_width=True,
+        config=EXPORT_CONFIG
+    )
 # ================= COUNTRY =================
 else:
     st.sidebar.header("Country View")
@@ -189,7 +206,11 @@ else:
         yaxis=dict(showgrid=True, gridcolor="rgba(255,255,255,0.08)")
     )
 
-    st.plotly_chart(fig, width="stretch")
+    st.plotly_chart(
+        fig,
+        use_container_width=True,
+        config=EXPORT_CONFIG
+    )
 
     # -------- PIE COMPOSITION --------
     st.subheader("Military Import Structure by Product")
