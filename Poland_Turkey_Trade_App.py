@@ -391,7 +391,7 @@ if selected == "Home":
         }
     )
     # ---- Average share ----
-    avg_share = pie_data["Share_%"].mean()
+    avg_share = pie_data.loc[pie_data["Final_FOB_Value"] > 0, "Share_%"].mean()
     st.markdown(f"**Average category share:** {avg_share:.2f}%")
 
     # ---- Merge correct descriptions for chosen level ----
@@ -479,6 +479,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
