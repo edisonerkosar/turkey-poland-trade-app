@@ -36,19 +36,19 @@ ALL_YEARS = list(range(2013, 2025))
 
 # ---------- HS4 MAP ----------
 hs_map = {
-    "8710": "Tanks & Armoured Vehicles",
+    "8710": "Tanks and other armoured fighting vehicles",
     "8802": "Aircraft & Helicopters",
     "880699": "UAV, with mass > 150 kg",
     "9301": "Military Weapons",
     "9302": "Revolvers & Pistols",
-    "9306": "Ammunition",
+    "9306": "Bombs, grenades, torpedoes, mines, missiles and similar munitions of war",
     "8906": "Warships & Naval Vessels"
 }
 
 HS4_COLORS = {
-    "8701": "#ff7f0e",
+    "8710": "#ff7f0e",
     "8802": "#1f77b4",
-    "8803": "#2ca02c",
+    "880699": "#2ca02c",
     "8906": "#9467bd",
     "9301": "#e377c2",
     "9302": "#d62728",
