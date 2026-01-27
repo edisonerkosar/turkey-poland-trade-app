@@ -399,7 +399,29 @@ if selected == "Home":
     desc_map.columns = [level, "Description"]
 
     # ---- sort numerically first ----
+    pie_table = pie_data.merge(desc_map, on=level, how="left")
+    pie_table = pie_table[[level, "Description", "Share_%"]]
+
+    # ---- sort numerically first ----
     pie_table_sorted = pie_table.sort_values("Share_%", ascending=False).copy()
+
+    # ---- format for display AFTER sorting ----
+    def format_share(x):
+        if x < 0.01:
+            return "<0.01"
+        else:
+            return f"{x:.2f}"
+
+    pie_table_sorted["Share_Display"] = pie_table_sorted["Share_%"].apply(format_share)
+
+    # ---- move tiny values to bottom ----
+    tiny = pie_table_sorted[pie_table_sorted["Share_%"] < 0.01]
+    normal = pie_table_sorted[pie_table_sorted["Share_%"] >= 0.01]
+
+    pie_table_sorted = pd.concat([normal, tiny], ignore_index=True)
+
+    # ---- final table ----
+    pie_table_sorted = pie_table_sorted[[level, "Description", "Share_Display"]]
 
     # ---- format for display AFTER sorting ----
     def format_share(x):
@@ -456,6 +478,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
