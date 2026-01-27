@@ -400,7 +400,13 @@ if selected == "Home":
 
     pie_table = pie_data.merge(desc_map, on=level, how="left")
     pie_table = pie_table[[level, "Description", "Share_%"]]
-    pie_table["Share_%"] = pie_table["Share_%"].round(2)
+    def format_share(x):
+    if x < 0.01:
+        return "<0.01"
+    else:
+        return f"{x:.2f}"
+
+    pie_table["Share_%"] = pie_table["Share_%"].apply(format_share)
 
     st.markdown("#### Category Share Table")
     st.dataframe(
@@ -440,6 +446,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
