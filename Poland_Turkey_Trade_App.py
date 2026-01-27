@@ -2,7 +2,17 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import os
+import io
 
+def download_plot(fig, filename="figure.png", scale=3, fmt="png"):
+    img_bytes = fig.to_image(format=fmt, scale=scale)
+    st.download_button(
+        label=f"Download {filename}",
+        data=img_bytes,
+        file_name=filename,
+        mime=f"image/{fmt}"
+    )
+    
 st.set_page_config(layout="wide")
 
 st.title("Turkey–Poland Trade Explorer (2013–2024)")
@@ -178,7 +188,7 @@ if selected == "Home":
     )
 
     st.plotly_chart(fig_default, width="stretch")
-
+    download_plot(fig, "top10.png", fmt="svg")
 # ---- HS6 DESCRIPTIONS ----
 st.markdown("#### HS6 Code Descriptions")
 
@@ -286,7 +296,7 @@ fig.update_layout(
 )
 
 st.plotly_chart(fig, width="stretch")
-
+download_plot(fig, "history_top_10.png", fmt="svg")
 # ================= SHARE STRUCTURE =================
 st.markdown("---")
 st.subheader("Trade Structure – Category Shares")
@@ -333,7 +343,7 @@ fig_pie.update_traces(
 )
 
 st.plotly_chart(fig_pie, use_container_width=True)
-
+download_plot(fig, "pie", fmt="svg")
 
 # ---- Average share ----
 avg_share = pie_data["Share_%"].mean()
@@ -398,6 +408,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
