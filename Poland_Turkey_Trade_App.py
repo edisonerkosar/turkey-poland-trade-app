@@ -398,8 +398,14 @@ if selected == "Home":
 
     desc_map.columns = [level, "Description"]
 
-    # ---- sort numerically first ----
+    # ---- attach descriptions ----
     pie_table = pie_data.merge(desc_map, on=level, how="left")
+
+    # make sure numeric column exists
+    if "Share_%" not in pie_table.columns:
+        st.error("Internal error: Share_% column missing.")
+        st.stop()
+
     pie_table = pie_table[[level, "Description", "Share_%"]]
 
     # ---- sort numerically first ----
@@ -420,27 +426,9 @@ if selected == "Home":
 
     pie_table_sorted = pd.concat([normal, tiny], ignore_index=True)
 
-    # ---- final table ----
+    # ---- final table for display ----
     pie_table_sorted = pie_table_sorted[[level, "Description", "Share_Display"]]
 
-    # ---- format for display AFTER sorting ----
-    def format_share(x):
-        if x < 0.01:
-            return "<0.01"
-        else:
-            return f"{x:.2f}"
-
-    pie_table_sorted["Share_Display"] = pie_table_sorted["Share_%"].apply(format_share)
-
-    # ---- move tiny values to bottom ----
-    tiny = pie_table_sorted[pie_table_sorted["Share_%"] < 0.01]
-    normal = pie_table_sorted[pie_table_sorted["Share_%"] >= 0.01]
-
-    pie_table_sorted = pd.concat([normal, tiny], ignore_index=True)
-
-    # ---- keep only display column ----
-    pie_table_sorted = pie_table_sorted[[level, "Description", "Share_Display"]]
-    
     st.markdown("#### Category Share Table")
     st.dataframe(
         pie_table_sorted,
@@ -478,6 +466,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
