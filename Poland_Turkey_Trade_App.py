@@ -360,7 +360,8 @@ if selected == "Home":
         textinfo="text",
         hovertemplate=f"{level}: %{{label}}<br>%{{value:.2f}}%"
     )
-
+    fig_pie.update_layout(showlegend=False)
+    
     st.plotly_chart(
         fig_pie,
         use_container_width=True,
@@ -439,6 +440,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
