@@ -4,6 +4,18 @@ import plotly.express as px
 import os
 import numpy as np
 
+EXPORT_CONFIG = {
+    "displaylogo": False,
+    "modeBarButtonsToAdd": ["toImage"],
+    "toImageButtonOptions": {
+        "format": "svg",
+        "filename": "trade_chart",
+        "height": 800,
+        "width": 1200,
+        "scale": 3
+    }
+}
+
 st.set_page_config(layout="wide")
 st.title("Turkey ↔ EU Total Trade (2013–2024)")
 
@@ -134,7 +146,11 @@ fig.update_layout(
     legend_title_text="EU Country"
 )
 
-st.plotly_chart(fig, width="stretch")
+st.plotly_chart(
+    fig,
+    use_container_width=True,
+    config=EXPORT_CONFIG
+)
 
 # ---------- CAGR ----------
 st.subheader(cagr_title)
@@ -175,7 +191,12 @@ else:
     fig_cagr.update_layout(
     yaxis_tickformat=".1f"
 )
-    st.plotly_chart(fig_cagr, width="stretch")
+    
+    st.plotly_chart(
+    fig_cagr,
+    use_container_width=True,
+    config=EXPORT_CONFIG
+)
 
 # ================= GROWTH vs SIZE MATRIX =================
 st.subheader("Growth vs Size Matrix (EU–Turkey Trade)")
@@ -225,7 +246,12 @@ else:
     )
 
     fig_matrix.update_xaxes(type="log")
-    st.plotly_chart(fig_matrix, width="stretch")
+    
+    st.plotly_chart(
+        fig_matrix,
+        use_container_width=True,
+        config=EXPORT_CONFIG
+    )
 
 
 # ---------- FOCUS COUNTRY ----------
@@ -265,7 +291,12 @@ fig2.update_layout(
     yaxis_title="Trade Value (USD)"
 )
 
-st.plotly_chart(fig2, width="stretch")
+
+st.plotly_chart(
+    fig2,
+    use_container_width=True,
+    config=EXPORT_CONFIG
+)
 
 # ---------- FOOTER ----------
 st.sidebar.markdown("---")
