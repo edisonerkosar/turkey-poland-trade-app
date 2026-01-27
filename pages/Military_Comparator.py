@@ -93,6 +93,14 @@ if view_mode == "Home (EU Comparison)":
         color="Importer",
         labels={"primaryValue": "Trade Value (USD)", "refYear": "Year"}
     )
+    fig.update_layout(
+        title=dict(
+            text="EU Comparison – Total Military Imports from Turkey",
+            x=0.5,
+            xanchor="center",
+            font=dict(size=20)
+        )
+    )
 
     for trace in fig.data:
         if trace.name == "Poland":
@@ -140,7 +148,14 @@ if view_mode == "Home (EU Comparison)":
         y="primaryValue",
         labels={"primaryValue": "Trade Value (USD)"}
     )
-
+    fig_rank.update_layout(
+        title=dict(
+            text=f"EU Ranking by Military Imports from Turkey ({rank_year})",
+            x=0.5,
+            xanchor="center",
+            font=dict(size=18)
+        )
+    )
     st.plotly_chart(
         fig_rank,
         use_container_width=True,
@@ -176,8 +191,16 @@ else:
         country_sum,
         x="refYear",
         y="primaryValue",
-        labels={"primaryValue": "Trade Value (USD)", "refYear": "Year"},
-        title=f"{focus_country} – Military Imports from Turkey"
+        labels={"primaryValue": "Trade Value (USD)", "refYear": "Year"}
+    )
+
+    fig.update_layout(
+        title=dict(
+            text=f"{focus_country} – Military Imports from Turkey",
+            x=0.5,
+            xanchor="center",
+            font=dict(size=18)
+        )
     )
 
     if compare_poland and focus_country != "Poland":
@@ -242,6 +265,14 @@ else:
                 color="cmdCode",
                 color_discrete_map=HS4_COLORS
             )
+            fig_pie.update_layout(
+                title=dict(
+                    text=f"{focus_country} – Structure ({pie_year})",
+                    x=0.5,
+                    xanchor="center",
+                    font=dict(size=16)
+                )
+            )
             st.plotly_chart(fig_pie, use_container_width=True)
 
     if compare_poland and focus_country != "Poland":
@@ -263,6 +294,14 @@ else:
                     hole=0.4,
                     color="cmdCode",
                     color_discrete_map=HS4_COLORS
+                )
+                fig_pie_pl.update_layout(
+                    title=dict(
+                        text=f"Poland – Structure ({pie_year})",
+                        x=0.5,
+                        xanchor="center",
+                        font=dict(size=16)
+                    )
                 )
                 st.plotly_chart(fig_pie_pl, use_container_width=True)
 
