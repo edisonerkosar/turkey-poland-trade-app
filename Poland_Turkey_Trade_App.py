@@ -151,8 +151,6 @@ if selected == "Home":
         .head(10)
     )
 
-    st.subheader(f"Top 10 {level} Categories in {latest_year}")
-
     fig_default = px.bar(
         top10,
         x=level,
@@ -162,15 +160,12 @@ if selected == "Home":
     )
 
     fig_default.update_layout(
-        xaxis_title="HS Code",
-        yaxis_title="Trade Value (USD)",
-        xaxis=dict(
-            type="category",
-            tickmode="array",
-            tickvals=list(top10[level]),
-            ticktext=list(top10[level])
-        ),
-        yaxis=dict(showgrid=True)
+        title=dict(
+            text=f"Top 10 {level} Categories in {latest_year}",
+            x=0.5,
+            xanchor="center",
+            font=dict(size=18)
+        )
     )
     st.plotly_chart(
         fig_default,
@@ -205,16 +200,6 @@ if selected == "Home":
         st.markdown(f"**{c}** – {desc}")
 
 # ---- TIME SERIES GRAPH ----
-if selected == "Home":
-    st.subheader(f"Trade Value of Top 10 Best Performing {level} Categories Over Time")
-else:
-    # Build human-readable direction
-    if direction == "Turkey to Poland":
-        flow = "from Turkey to Poland"
-    else:
-        flow = "from Poland to Turkey"
-
-    st.subheader(f"Export of Good {code} {flow} Over Time")
 
 all_years = list(range(2013, 2025))
 proj_years = list(range(2025, 2031))
@@ -279,6 +264,16 @@ if not complete:
 chart_data = pd.concat(complete, ignore_index=True)
 chart_data = chart_data.sort_values("Year")
 
+if selected == "Home":
+    title_text = f"Trade Value of Top 10 Best Performing {level} Categories Over Time"
+else:
+    if direction == "Turkey to Poland":
+        flow = "from Turkey to Poland"
+    else:
+        flow = "from Poland to Turkey"
+
+    title_text = f"Export of Good {code} {flow} Over Time"
+    
 fig = px.line(
     chart_data,
     x="Year",
@@ -289,6 +284,12 @@ fig = px.line(
 )
 
 fig.update_layout(
+    title=dict(
+        text=title_text,
+        x=0.5,
+        xanchor="center",
+        font=dict(size=20)
+    ),
     yaxis_title="Trade Value (USD)",
     yaxis=dict(showgrid=True),
     xaxis=dict(
@@ -351,8 +352,7 @@ if selected == "Home":
         pie_data,
         names=level,
         values="Share_%",
-        hole=0.4,
-        title=f"Category Share Structure in {pie_year}"
+        hole=0.4
     )
 
     fig_pie.update_traces(
@@ -360,7 +360,15 @@ if selected == "Home":
         textinfo="text",
         hovertemplate=f"{level}: %{{label}}<br>%{{value:.2f}}%"
     )
-    fig_pie.update_layout(showlegend=False)
+    fig_pie.update_layout(
+    title=dict(
+        text=f"Category Share Structure in {pie_year}",
+        x=0.5,
+        xanchor="center",
+        font=dict(size=18)
+    ),
+    showlegend=False
+)
     
     st.plotly_chart(
         fig_pie,
@@ -466,6 +474,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
