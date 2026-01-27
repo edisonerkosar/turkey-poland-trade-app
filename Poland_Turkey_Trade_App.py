@@ -188,7 +188,7 @@ if selected == "Home":
     )
 
     st.plotly_chart(fig_default, width="stretch")
-    download_plot(fig, "top10.png", fmt="svg")
+    download_plot(fig_default, "top10.png", fmt="svg")
 # ---- HS6 DESCRIPTIONS ----
 st.markdown("#### HS6 Code Descriptions")
 
@@ -343,7 +343,7 @@ fig_pie.update_traces(
 )
 
 st.plotly_chart(fig_pie, use_container_width=True)
-download_plot(fig, "pie", fmt="svg")
+download_plot(fig_pie, "pie", fmt="svg")
 
 # ---- Average share ----
 avg_share = pie_data["Share_%"].mean()
@@ -408,6 +408,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
