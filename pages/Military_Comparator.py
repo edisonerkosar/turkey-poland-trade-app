@@ -15,7 +15,7 @@ EXPORT_CONFIG = {
     }
 }
 st.set_page_config(layout="wide")
-st.title("Turkey → EU Military Trade Comparator (HS4, 2013–2024)")
+st.title("Turkey → EU Military Trade Comparator (HS Codes, 2013–2024)")
 
 # ---------- LOAD ----------
 @st.cache_data
@@ -25,7 +25,7 @@ def load_military_data():
 
     df = pd.read_excel(path)
     df["refYear"] = df["refYear"].astype(int)
-    df["cmdCode"] = df["cmdCode"].astype(str).str.zfill(4)
+    df["cmdCode"] = df["cmdCode"].astype(str).str.strip()
     df["Importer"] = df["Importer"].astype(str)
     df["primaryValue"] = pd.to_numeric(df["primaryValue"], errors="coerce").fillna(0)
     return df
@@ -35,14 +35,14 @@ df = load_military_data()
 ALL_YEARS = list(range(2013, 2025))
 
 # ---------- HS4 MAP ----------
-hs4_map = {
-    "8701": "Tanks & Armoured Vehicles",
-    "8802": "Military Aircraft & Helicopters",
-    "8803": "Aircraft Parts",
-    "8906": "Warships & Naval Vessels",
+hs_map = {
+    "8710": "Tanks & Armoured Vehicles",
+    "8802": "Aircraft & Helicopters",
+    "880699": "UAV, with mass > 150 kg",
     "9301": "Military Weapons",
     "9302": "Revolvers & Pistols",
-    "9306": "Ammunition"
+    "9306": "Ammunition",
+    "8906": "Warships & Naval Vessels"
 }
 
 HS4_COLORS = {
@@ -63,14 +63,14 @@ view_mode = st.sidebar.radio(
     ["Home (EU Comparison)", "Country Focus"]
 )
 
-hs4_selected = st.sidebar.multiselect(
-    "Select Military HS4 Codes",
-    options=list(hs4_map.keys()),
-    default=list(hs4_map.keys()),
-    format_func=lambda x: f"{x} – {hs4_map[x]}"
+hs_selected = st.sidebar.multiselect(
+    "Select Military HS Codes",
+    options=sorted(df["cmdCode"].unique()),
+    default=sorted(df["cmdCode"].unique()),
+    format_func=lambda x: f"{x} – {hs_map.get(x, 'Other military equipment')}"
 )
 
-df = df[df["cmdCode"].isin(hs4_selected)]
+df = df[df["cmdCode"].isin(hs_selected)]
 
 if df.empty:
     st.warning("No data for selected HS4 codes.")
@@ -262,8 +262,7 @@ else:
                 names="cmdCode",
                 values="primaryValue",
                 hole=0.4,
-                color="cmdCode",
-                color_discrete_map=HS4_COLORS
+                color="cmdCode"
             )
             fig_pie.update_layout(
                 title=dict(
@@ -306,7 +305,7 @@ else:
                 st.plotly_chart(fig_pie_pl, use_container_width=True)
 
     # -------- HS4 LEGEND --------
-    st.markdown("#### HS4 Code Descriptions")
+    st.markdown("#### HS Code Descriptions")
 
     active_codes = set(pie_focus["cmdCode"])
     if compare_poland and focus_country != "Poland" and not pie_poland.empty:
