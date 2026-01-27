@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import os
+import itertools
 
 EXPORT_CONFIG = {
     "displaylogo": False,
@@ -13,6 +14,13 @@ EXPORT_CONFIG = {
         "width": 1200,
         "scale": 3
     }
+}
+base_palette = px.colors.qualitative.Set2
+unique_codes = sorted(df["cmdCode"].unique())
+
+HS_COLORS = {
+    code: base_palette[i % len(base_palette)]
+    for i, code in enumerate(unique_codes)
 }
 st.set_page_config(layout="wide")
 st.title("Turkey → EU Military Trade Comparator (HS Codes, 2013–2024)")
@@ -43,16 +51,6 @@ hs_map = {
     "9302": "Revolvers & Pistols",
     "9306": "Bombs, grenades, torpedoes, mines, missiles and similar munitions of war",
     "8906": "Warships & Naval Vessels"
-}
-
-HS4_COLORS = {
-    "8710": "#ff7f0e",
-    "8802": "#1f77b4",
-    "880699": "#2ca02c",
-    "8906": "#9467bd",
-    "9301": "#e377c2",
-    "9302": "#d62728",
-    "9306": "#17becf",
 }
 
 # ---------- SIDEBAR ----------
@@ -292,7 +290,7 @@ else:
                     values="primaryValue",
                     hole=0.4,
                     color="cmdCode",
-                    color_discrete_map=HS4_COLORS
+                    color_discrete_map=HS_COLORS
                 )
                 fig_pie_pl.update_layout(
                     title=dict(
