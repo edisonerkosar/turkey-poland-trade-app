@@ -156,7 +156,8 @@ if selected == "Home":
         x=level,
         y="Final_FOB_Value",
         text_auto=True,
-        labels={"Final_FOB_Value": "Trade Value (USD)"}
+        labels={"Final_FOB_Value": "Trade Value (USD)"},
+        category_orders={level: list(top10[level])}  # 👈 keep Top10 order
     )
 
     fig_default.update_layout(
@@ -474,6 +475,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
