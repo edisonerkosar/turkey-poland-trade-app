@@ -2,17 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import os
-import io
 
-def download_plot(fig, filename="figure.png", scale=3, fmt="png"):
-    img_bytes = fig.to_image(format=fmt, scale=scale)
-    st.download_button(
-        label=f"Download {filename}",
-        data=img_bytes,
-        file_name=filename,
-        mime=f"image/{fmt}"
-    )
-    
 st.set_page_config(layout="wide")
 
 st.title("Turkey–Poland Trade Explorer (2013–2024)")
@@ -186,9 +176,21 @@ if selected == "Home":
         ),
         yaxis=dict(showgrid=True)
     )
-
-    st.plotly_chart(fig_default, width="stretch")
-    download_plot(fig_default, "top10.png", fmt="svg")
+    st.plotly_chart(
+        fig_default,
+        use_container_width=True,
+        config={
+            "displaylogo": False,
+            "modeBarButtonsToAdd": ["toImage"],
+            "toImageButtonOptions": {
+                "format": "svg",      # or "png"
+                "filename": "trade_chart",
+                "height": 800,
+                "width": 1200,
+                "scale": 3
+        }
+    }
+)
 # ---- HS6 DESCRIPTIONS ----
 st.markdown("#### HS6 Code Descriptions")
 
@@ -295,8 +297,21 @@ fig.update_layout(
     legend_title_text=""
 )
 
-st.plotly_chart(fig, width="stretch")
-download_plot(fig, "history_top_10.png", fmt="svg")
+st.plotly_chart(
+        fig,
+        use_container_width=True,
+        config={
+            "displaylogo": False,
+            "modeBarButtonsToAdd": ["toImage"],
+            "toImageButtonOptions": {
+                "format": "svg",      # or "png"
+                "filename": "trade_chart",
+                "height": 800,
+                "width": 1200,
+                "scale": 3
+        }
+    }
+)
 # ================= SHARE STRUCTURE =================
 st.markdown("---")
 st.subheader("Trade Structure – Category Shares")
@@ -342,9 +357,21 @@ fig_pie.update_traces(
     hovertemplate=f"{level}: %{{label}}<br>%{{value:.2f}}%"
 )
 
-st.plotly_chart(fig_pie, use_container_width=True)
-download_plot(fig_pie, "pie", fmt="svg")
-
+st.plotly_chart(
+        fig_pie,
+        use_container_width=True,
+        config={
+            "displaylogo": False,
+            "modeBarButtonsToAdd": ["toImage"],
+            "toImageButtonOptions": {
+                "format": "svg",      # or "png"
+                "filename": "trade_chart",
+                "height": 800,
+                "width": 1200,
+                "scale": 3
+        }
+    }
+)
 # ---- Average share ----
 avg_share = pie_data["Share_%"].mean()
 st.markdown(f"**Average category share:** {avg_share:.2f}%")
@@ -408,6 +435,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
