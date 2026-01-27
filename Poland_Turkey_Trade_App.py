@@ -188,23 +188,21 @@ if selected == "Home":
     }
 )
 # ---- HS6 DESCRIPTIONS ----
-st.markdown("#### HS6 Code Descriptions")
-
 if selected == "Home":
+
+    st.markdown("#### HS Code Descriptions")
+
     desc_source = options
     codes = top10[level]
-else:
-    desc_source = options
-    codes = [code]
 
-for c in codes:
-    row = desc_source[desc_source[level] == c]
-    if not row.empty:
-        desc = row.iloc[0].iloc[1]
-    else:
-        desc = "Description not available"
+    for c in codes:
+        row = desc_source[desc_source[level] == c]
+        if not row.empty:
+            desc = row.iloc[0].iloc[1]
+        else:
+            desc = "Description not available"
 
-    st.markdown(f"**{c}** – {desc}")
+        st.markdown(f"**{c}** – {desc}")
 
 # ---- TIME SERIES GRAPH ----
 if selected == "Home":
@@ -441,6 +439,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
