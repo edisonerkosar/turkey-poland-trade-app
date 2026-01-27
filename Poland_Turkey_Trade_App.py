@@ -15,8 +15,6 @@ def load_data():
 
     df = pd.read_excel(path, engine="openpyxl")
 
-    st.write("DEBUG — columns in Excel:")
-    st.write(df.columns.tolist())
     # --- normalize column names ---
     df.columns = df.columns.str.strip()
 
@@ -182,7 +180,7 @@ if selected == "Home":
             "modeBarButtonsToAdd": ["toImage"],
             "toImageButtonOptions": {
                 "format": "svg",      # or "png"
-                "filename": "trade_chart",
+                "filename": "top10_trade" if selected == "Home" else f"{code}_{direction_key}_timeseries",
                 "height": 800,
                 "width": 1200,
                 "scale": 3
@@ -209,7 +207,16 @@ for c in codes:
     st.markdown(f"**{c}** – {desc}")
 
 # ---- TIME SERIES GRAPH ----
-st.subheader("Trade Value of Top 10 Best Performing HS6 Categories Over Time")
+if selected == "Home":
+    st.subheader(f"Trade Value of Top 10 Best Performing {level} Categories Over Time")
+else:
+    # Build human-readable direction
+    if direction == "Turkey to Poland":
+        flow = "from Turkey to Poland"
+    else:
+        flow = "from Poland to Turkey"
+
+    st.subheader(f"Export of Good {code} {flow} Over Time")
 
 all_years = list(range(2013, 2025))
 proj_years = list(range(2025, 2031))
@@ -303,7 +310,7 @@ st.plotly_chart(
             "modeBarButtonsToAdd": ["toImage"],
             "toImageButtonOptions": {
                 "format": "svg",      # or "png"
-                "filename": "trade_chart",
+                "filename": "top10_trade" if selected == "Home" else f"{code}_{direction_key}_timeseries",
                 "height": 800,
                 "width": 1200,
                 "scale": 3
@@ -363,7 +370,7 @@ st.plotly_chart(
             "modeBarButtonsToAdd": ["toImage"],
             "toImageButtonOptions": {
                 "format": "svg",      # or "png"
-                "filename": "trade_chart",
+                "filename": "top10_trade" if selected == "Home" else f"{code}_{direction_key}_timeseries",
                 "height": 800,
                 "width": 1200,
                 "scale": 3
@@ -433,6 +440,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
