@@ -311,7 +311,7 @@ else:
     if compare_poland and focus_country != "Poland" and not pie_poland.empty:
         active_codes = active_codes.union(set(pie_poland["cmdCode"]))
 
-    for code, desc in hs4_map.items():
+    for code, desc in hs_map.items():
         if code in active_codes:
             color = HS4_COLORS.get(code, "#FFFFFF")
             st.markdown(
