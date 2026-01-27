@@ -442,6 +442,11 @@ if selected == "Home":
     # ---- final table for display ----
     pie_table_sorted = pie_table_sorted[[level, "Description", "Share_Display"]]
 
+    # rename column for display
+    pie_table_sorted = pie_table_sorted.rename(
+        columns={"Share_Display": "Share [%]"}
+    )
+
     st.markdown("#### Category Share Table")
     st.dataframe(
         pie_table_sorted,
@@ -479,6 +484,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
