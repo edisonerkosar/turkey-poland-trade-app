@@ -313,6 +313,7 @@ else:
                         xanchor="center",
                         font=dict(size=16)
                     )
+                )
                 fig_pie_pl.update_traces(
                     textfont=dict(size=18),
                     hoverlabel=dict(font_size=16)
