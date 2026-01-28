@@ -272,6 +272,14 @@ else:
                     font=dict(size=16)
                 )
             )
+            fig_pie.update_traces(
+                textfont=dict(size=18),          # percentages inside pie
+                hoverlabel=dict(font_size=16)    # hover text
+            )
+
+            fig_pie.update_layout(
+                legend=dict(font=dict(size=16))  # legend text (if shown)
+            )
             st.plotly_chart(
                 fig_pie,
                 use_container_width=True,
@@ -305,6 +313,13 @@ else:
                         xanchor="center",
                         font=dict(size=16)
                     )
+                fig_pie_pl.update_traces(
+                    textfont=dict(size=18),
+                    hoverlabel=dict(font_size=16)
+                )
+
+                fig_pie_pl.update_layout(
+                    legend=dict(font=dict(size=16))
                 )
                 st.plotly_chart(
                     fig_pie_pl,
