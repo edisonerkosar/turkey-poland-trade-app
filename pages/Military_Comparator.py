@@ -272,7 +272,11 @@ else:
                     font=dict(size=16)
                 )
             )
-            st.plotly_chart(fig_pie, use_container_width=True)
+            st.plotly_chart(
+                fig_pie,
+                use_container_width=True,
+                config=EXPORT_CONFIG
+            )
 
     if compare_poland and focus_country != "Poland":
         pie_poland = (
@@ -302,7 +306,11 @@ else:
                         font=dict(size=16)
                     )
                 )
-                st.plotly_chart(fig_pie_pl, use_container_width=True)
+                st.plotly_chart(
+                    fig_pie_pl,
+                    use_container_width=True,
+                    config=EXPORT_CONFIG
+                )        
 
     # -------- HS4 LEGEND --------
     st.markdown("#### HS Code Descriptions")
