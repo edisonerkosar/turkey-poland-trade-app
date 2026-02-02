@@ -363,7 +363,7 @@ if selected == "Home":
     fig_pie.update_traces(
     text=pie_data["Display"],
     textinfo="text",
-    textfont=dict(size=22),          # 👈 INCREASE PERCENTAGE FONT SIZE
+    textfont=dict(size=20),          # 👈 INCREASE PERCENTAGE FONT SIZE
     hovertemplate=f"{level}: %{{label}}<br>%{{value:.2f}}%"
 )
     fig_pie.update_layout(
@@ -485,6 +485,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
