@@ -400,8 +400,7 @@ if selected == "Home":
 
     st.markdown(
         f"""
-    **Average category share:** {avg_share:.2f}%  
-    over **{num_traded_goods} traded goods** in **{pie_year}**
+    - **Average category share:** {avg_share:.2f}% over **{num_traded_goods} traded goods** in **{pie_year}**
 
     - **{num_below_1pct} traded goods** have a share **below 1%**
     """
@@ -497,6 +496,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
