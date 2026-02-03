@@ -391,20 +391,32 @@ if selected == "Home":
             }
         }
     )
-    # ---- Average share (only traded goods) ----
-    traded_goods = pie_data[pie_data["Final_FOB_Value"] > 0]
+    # ---- Average & concentration metrics (only traded goods) ----
+    traded_goods = pie_data[pie_data["Final_FOB_Value"] > 0].copy()
 
     avg_share = traded_goods["Share_%"].mean()
     num_traded_goods = traded_goods.shape[0]
     num_below_1pct = traded_goods[traded_goods["Share_%"] < 1].shape[0]
 
+    # ---- Top 10 concentration ----
+    top10_goods = traded_goods.sort_values("Share_%", ascending=False).head(10)
+
+    top10_avg_share = top10_goods["Share_%"].mean()
+    top10_sum_share = top10_goods["Share_%"].sum()
+
     st.markdown(
         f"""
-    - **Average category share:** {avg_share:.2f}% over **{num_traded_goods} traded goods** in **{pie_year}**
+    - **Average category share:** {avg_share:.2f}%  
+      over **{num_traded_goods} traded goods** in **{pie_year}**
 
     - **{num_below_1pct} traded goods** have a share **below 1%**
+
+    - **Top 10 categories:**
+      - Average share: **{top10_avg_share:.2f}%**
+      - Combined share: **{top10_sum_share:.2f}%**
     """
     )
+
 
     # ---- Merge correct descriptions for chosen level ----
     desc_cols = DESC_MAP[level]
@@ -496,6 +508,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
