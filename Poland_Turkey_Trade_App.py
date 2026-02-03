@@ -397,7 +397,23 @@ if selected == "Home":
     avg_share = traded_goods["Share_%"].mean()
     num_traded_goods = traded_goods.shape[0]
     num_below_1pct = traded_goods[traded_goods["Share_%"] < 1].shape[0]
+    # ---- HHI ----
+    hhi = (pie_data["Share_%"] ** 2).sum()
+    n = len(pie_data)
 
+    if hhi < 1500:
+        concentration_label = "Low concentration"
+    elif hhi < 2500:
+        concentration_label = "Moderate concentration"
+    else:
+        concentration_label = "High concentration"
+
+    st.markdown(
+        f"""
+    - **Herfindahl–Hirschman Index (HHI):** {hhi:.0f}
+    - **Trade concentration:** **{concentration_label}**
+    """
+    )
     # ---- Top 10 concentration ----
     top10_goods = traded_goods.sort_values("Share_%", ascending=False).head(10)
 
@@ -508,6 +524,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
