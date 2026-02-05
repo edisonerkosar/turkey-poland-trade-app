@@ -181,7 +181,8 @@ if view_mode == "Home (EU Comparison)":
         st.plotly_chart(
             fig_rank,
             use_container_width=True,
-            config=EXPORT_CONFIG
+            config=EXPORT_CONFIG,
+            key="military_rank_2024"
         )
 
     # ----- CAGR CALCULATION -----
@@ -246,7 +247,8 @@ if view_mode == "Home (EU Comparison)":
         st.plotly_chart(
             fig_cagr,
             use_container_width=True,
-            config=EXPORT_CONFIG
+            config=EXPORT_CONFIG,
+            key="military_cagr_2013_2024"
         )
 
 # ================= COUNTRY =================
