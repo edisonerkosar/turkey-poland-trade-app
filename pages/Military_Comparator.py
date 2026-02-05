@@ -177,12 +177,12 @@ for country in ranking["Importer"]:
     nonzero = series[series["primaryValue"] > 0]
 
     if len(nonzero) < 2:
-        continue  # not enough data for CAGR
+        continue
 
-    start_year = nonzero.iloc[0]["refYear"]
-    end_year = nonzero.iloc[-1]["refYear"]
-    start_val = nonzero.iloc[0]["primaryValue"]
-    end_val = nonzero.iloc[-1]["primaryValue"]
+    start_year = int(nonzero.iloc[0]["refYear"])
+    end_year = int(nonzero.iloc[-1]["refYear"])
+    start_val = float(nonzero.iloc[0]["primaryValue"])
+    end_val = float(nonzero.iloc[-1]["primaryValue"])
 
     years = end_year - start_year
     if years <= 0 or start_val <= 0:
@@ -195,18 +195,22 @@ for country in ranking["Importer"]:
         "CAGR": cagr
     })
 
-cagr_df = pd.DataFrame(cagr_rows).sort_values("CAGR", ascending=False)
+cagr_df = pd.DataFrame(cagr_rows)
 
 if cagr_df.empty:
     st.info("Not enough historical data to calculate CAGR.")
 else:
+    cagr_df = cagr_df.sort_values("CAGR", ascending=False)
+
     fig_cagr = px.bar(
         cagr_df,
         x="Importer",
         y="CAGR",
-        labels={"CAGR": "CAGR %"},
-        text_auto=".1f"
+        text="CAGR",
+        labels={"CAGR": "CAGR (%)"}
     )
+
+    fig_cagr.update_traces(texttemplate="%{text:.1f}", textposition="outside")
 
     fig_cagr.update_layout(
         title=dict(
