@@ -87,13 +87,32 @@ if not selected_countries:
     st.stop()
     
 df_view = df[df["Importer"].isin(selected_countries)]
+# ---------- ENSURE ZERO-TRADE YEARS ARE EXPLICIT ----------
+all_years_df = pd.DataFrame({"refYear": ALL_YEARS})
+all_countries_df = pd.DataFrame({"Importer": selected_countries})
+
+full_index = all_years_df.merge(all_countries_df, how="cross")
+
+df_view_complete = (
+    full_index
+    .merge(
+        df_view,
+        on=["refYear", "Importer"],
+        how="left"
+    )
+)
+
+df_view_complete["primaryValue"] = (
+    df_view_complete["primaryValue"]
+    .fillna(0)
+)
 # ================= HOME =================
 if view_mode == "Home (EU Comparison)":
      # ===== EU-WIDE TREND OVER TIME =====
     st.subheader("EU Comparison – Total Military Imports from Turkey")
 
     home = (
-        df_view.groupby(["refYear", "Importer"], as_index=False)["primaryValue"]
+        df_view_complete.groupby(["refYear", "Importer"], as_index=False)["primaryValue"]
         .sum()
     )
 
@@ -160,7 +179,7 @@ if view_mode == "Home (EU Comparison)":
     index=len(ALL_YEARS) - 1
     )
     ranking = (
-        df_view[df_view["refYear"] == rank_year]
+        df_view_complete[df_view_complete["refYear"] == rank_year]
         .groupby("Importer", as_index=False)["primaryValue"]
         .sum()
         .sort_values("primaryValue", ascending=False)
@@ -195,32 +214,31 @@ if view_mode == "Home (EU Comparison)":
 
     cagr_rows = []
 
-    for country in ranking["Importer"]:
-        series = (
-            df_view[df_view["Importer"] == country]
-            .groupby("refYear", as_index=False)["primaryValue"]
-            .sum()
-            .sort_values("refYear")
-        )
+for country in selected_countries:
+    series = (
+        df_view_complete[df_view_complete["Importer"] == country]
+        .sort_values("refYear")
+    )
 
-        nonzero = series[series["primaryValue"] > 0]
+    start_year = series.iloc[0]["refYear"]
+    end_year = series.iloc[-1]["refYear"]
 
-        if len(nonzero) < 2:
-            continue
+    start_val = series.iloc[0]["primaryValue"]
+    end_val = series.iloc[-1]["primaryValue"]
 
-        start_val = nonzero.iloc[0]["primaryValue"]
-        end_val = nonzero.iloc[-1]["primaryValue"]
-        years = nonzero.iloc[-1]["refYear"] - nonzero.iloc[0]["refYear"]
+    years = end_year - start_year
 
-        if start_val <= 0 or years <= 0:
-            continue
+    # If country starts at zero, CAGR is undefined → skip
+    if start_val <= 0 or years <= 0:
+        continue
 
-        cagr = ((end_val / start_val) ** (1 / years) - 1) * 100
+    cagr = ((end_val / start_val) ** (1 / years) - 1) * 100
 
-        cagr_rows.append({
-            "Importer": country,
-            "CAGR": cagr
-        })
+    cagr_rows.append({
+        "Importer": country,
+        "CAGR": cagr
+    })
+
 
     cagr_df = pd.DataFrame(cagr_rows)
 
@@ -287,7 +305,7 @@ else:
 
     # -------- TIME SERIES --------
     country_sum = (
-        df_view[df_view["Importer"] == focus_country]
+        df_view_complete[df_view_complete["Importer"] == focus_country]
         .groupby("refYear", as_index=False)["primaryValue"]
         .sum()
     )
