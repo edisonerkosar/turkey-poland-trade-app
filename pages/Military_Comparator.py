@@ -161,72 +161,72 @@ if view_mode == "Home (EU Comparison)":
         config=EXPORT_CONFIG
     )
 
-# ----- CAGR CALCULATION -----
-st.subheader(f"EU CAGR of Military Imports from Turkey (up to {rank_year})")
+    # ----- CAGR CALCULATION -----
+    st.subheader(f"EU CAGR of Military Imports from Turkey (up to {rank_year})")
 
-cagr_rows = []
+    cagr_rows = []
 
-for country in ranking["Importer"]:
-    series = (
-        df[df["Importer"] == country]
-        .groupby("refYear", as_index=False)["primaryValue"]
-        .sum()
-        .sort_values("refYear")
-    )
+    for country in ranking["Importer"]:
+        series = (
+            df[df["Importer"] == country]
+            .groupby("refYear", as_index=False)["primaryValue"]
+            .sum()
+            .sort_values("refYear")
+         )
 
-    nonzero = series[series["primaryValue"] > 0]
+         nonzero = series[series["primaryValue"] > 0]
 
-    if len(nonzero) < 2:
-        continue
+         if len(nonzero) < 2:
+            continue
 
-    start_year = int(nonzero.iloc[0]["refYear"])
-    end_year = int(nonzero.iloc[-1]["refYear"])
-    start_val = float(nonzero.iloc[0]["primaryValue"])
-    end_val = float(nonzero.iloc[-1]["primaryValue"])
+         start_year = int(nonzero.iloc[0]["refYear"])
+         end_year = int(nonzero.iloc[-1]["refYear"])
+         start_val = float(nonzero.iloc[0]["primaryValue"])
+         end_val = float(nonzero.iloc[-1]["primaryValue"])
 
-    years = end_year - start_year
-    if years <= 0 or start_val <= 0:
-        continue
+        years = end_year - start_year
+        if years <= 0 or start_val <= 0:
+            continue
 
-    cagr = ((end_val / start_val) ** (1 / years) - 1) * 100
+        cagr = ((end_val / start_val) ** (1 / years) - 1) * 100
 
-    cagr_rows.append({
-        "Importer": country,
-        "CAGR": cagr
-    })
+        cagr_rows.append({
+            "Importer": country,
+            "CAGR": cagr
+        })
 
-cagr_df = pd.DataFrame(cagr_rows)
+    cagr_df = pd.DataFrame(cagr_rows)
 
-if cagr_df.empty:
-    st.info("Not enough historical data to calculate CAGR.")
-else:
-    cagr_df = cagr_df.sort_values("CAGR", ascending=False)
+    if cagr_df.empty:
+        st.info("Not enough historical data to calculate CAGR.")
+    else:
+        cagr_df = cagr_df.sort_values("CAGR", ascending=False)
 
-    fig_cagr = px.bar(
-        cagr_df,
-        x="Importer",
-        y="CAGR",
-        text="CAGR",
-        labels={"CAGR": "CAGR (%)"}
-    )
+        fig_cagr = px.bar(
+            cagr_df,
+            x="Importer",
+            y="CAGR",
+            text="CAGR",
+            labels={"CAGR": "CAGR (%)"}
+        )
 
-    fig_cagr.update_traces(texttemplate="%{text:.1f}", textposition="outside")
+        fig_cagr.update_traces(texttemplate="%{text:.1f}", textposition="outside")
 
-    fig_cagr.update_layout(
-        title=dict(
-            text="EU Countries – CAGR of Military Imports from Turkey",
-            x=0.5,
-            xanchor="center",
-            font=dict(size=18)
-        ),
-        yaxis_title="CAGR (%)"
-    )
+        fig_cagr.update_layout(
+            title=dict(
+                text="EU Countries – CAGR of Military Imports from Turkey",
+                x=0.5,
+                xanchor="center",
+                font=dict(size=18)
+            ),
+            yaxis_title="CAGR (%)"
+        )
 
-    st.plotly_chart(
-        fig_cagr,
-        use_container_width=True,
-        config=EXPORT_CONFIG
-    )
+        st.plotly_chart(
+            fig_cagr,
+            use_container_width=True,
+            config=EXPORT_CONFIG
+        )
 
 # ================= COUNTRY =================
 else:
