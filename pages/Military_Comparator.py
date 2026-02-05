@@ -101,13 +101,36 @@ if view_mode == "Home (EU Comparison)":
 
     fig_trend.update_layout(
         title=dict(
-            text="EU Comparison – Total Military Imports from Turkey (2013–2024)",
+            text="EU Comparison – Total Military Imports from Turkey",
             x=0.5,
             xanchor="center",
             font=dict(size=20)
         ),
-        legend_title_text="EU Country"
+        legend_title_text="EU Country",
+
+        xaxis=dict(
+            title="Year",
+            tickmode="array",
+            tickvals=ALL_YEARS,                     # 👈 FORCE all years 2013–2024
+            ticktext=[str(y) for y in ALL_YEARS],
+            tickangle=0,
+            showgrid=True,
+            gridcolor="rgba(200,200,200,0.35)",     # 👈 visible vertical gridlines
+            gridwidth=1,
+            tickfont=dict(size=14),
+            title_font=dict(size=16)
+        ),
+
+        yaxis=dict(
+            title="Trade Value (USD)",
+            showgrid=True,
+            gridcolor="rgba(200,200,200,0.35)",
+            gridwidth=1,
+            tickfont=dict(size=14),
+            title_font=dict(size=16)
+        )
     )
+
 
     st.plotly_chart(
         fig_trend,
