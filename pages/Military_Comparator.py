@@ -155,11 +155,6 @@ if view_mode == "Home (EU Comparison)":
             font=dict(size=18)
         )
     )
-    st.plotly_chart(
-        fig_rank,
-        use_container_width=True,
-        config=EXPORT_CONFIG
-    )
 
     # ----- CAGR CALCULATION -----
     if view_mode == "Home (EU Comparison)":
