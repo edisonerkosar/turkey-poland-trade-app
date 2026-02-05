@@ -219,20 +219,29 @@ if view_mode == "Home (EU Comparison)":
             df_view_complete[df_view_complete["Importer"] == country]
             .sort_values("refYear")
         )
+        # find first non-zero year
+        nonzero = series[series["primaryValue"] > 0]
 
-        start_year = series.iloc[0]["refYear"]
+        if nonzero.empty:
+            # country never imported anything → CAGR = 0 by definition
+            cagr_rows.append({
+                "Importer": country,
+                "CAGR": 0.0
+            })
+            continue
+            
+        start_year = nonzero.iloc[0]["refYear"]
+        start_val = nonzero.iloc[0]["primaryValue"]
+
         end_year = series.iloc[-1]["refYear"]
-
-        start_val = series.iloc[0]["primaryValue"]
         end_val = series.iloc[-1]["primaryValue"]
 
         years = end_year - start_year
 
-        # If country starts at zero, CAGR is undefined → skip
-        if start_val <= 0 or years <= 0:
-            continue
-
-        cagr = ((end_val / start_val) ** (1 / years) - 1) * 100
+        if years <= 0:
+            cagr = 0.0
+        else:
+            cagr = ((end_val / start_val) ** (1 / years) - 1) * 100
 
         cagr_rows.append({
             "Importer": country,
