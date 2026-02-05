@@ -79,6 +79,11 @@ if df.empty:
 if view_mode == "Home (EU Comparison)":
 
     # ===== DATA FOR RANKING & CAGR =====
+    rank_year = st.selectbox(
+    "Ranking Year",
+    ALL_YEARS,
+    index=len(ALL_YEARS) - 1
+    )
     ranking = (
         df[df["refYear"] == rank_year]
         .groupby("Importer", as_index=False)["primaryValue"]
