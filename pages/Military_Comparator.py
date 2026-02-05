@@ -240,7 +240,7 @@ if view_mode == "Home (EU Comparison)":
         })
 
 
-        cagr_df = pd.DataFrame(cagr_rows)
+    cagr_df = pd.DataFrame(cagr_rows)
 
         if not cagr_df.empty:
             cagr_df = cagr_df.sort_values("CAGR", ascending=False)
