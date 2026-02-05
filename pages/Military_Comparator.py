@@ -118,8 +118,11 @@ if view_mode == "Home (EU Comparison)":
             xanchor="center",
             font=dict(size=20)
         ),
-        legend_title_text="EU Country",
-
+        legend=dict(
+            title="EU Country",
+            font=dict(size=16),          # 👈 KEY FIX
+            title_font=dict(size=18)
+        ),
         xaxis=dict(
             title="Year",
             tickmode="array",
