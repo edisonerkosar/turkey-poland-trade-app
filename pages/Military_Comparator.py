@@ -88,14 +88,27 @@ df = df[df["cmdCode"].isin(hs_selected)]
 if df.empty:
     st.warning("No data for selected HS4 codes.")
     st.stop()
+# ---------- COUNTRY SELECTION (GLOBAL FOR HOME) ----------
+all_countries = sorted(df["Importer"].unique())
 
+selected_countries = st.sidebar.multiselect(
+    "EU Countries to Display",
+    options=all_countries,
+    default=all_countries
+)
+
+if not selected_countries:
+    st.warning("Please select at least one country.")
+    st.stop()
+    
+df_view = df[df["Importer"].isin(selected_countries)]
 # ================= HOME =================
 if view_mode == "Home (EU Comparison)":
      # ===== EU-WIDE TREND OVER TIME =====
     st.subheader("EU Comparison – Total Military Imports from Turkey")
 
     home = (
-        df.groupby(["refYear", "Importer"], as_index=False)["primaryValue"]
+        df_view.groupby(["refYear", "Importer"], as_index=False)["primaryValue"]
         .sum()
     )
 
@@ -159,7 +172,7 @@ if view_mode == "Home (EU Comparison)":
     index=len(ALL_YEARS) - 1
     )
     ranking = (
-        df[df["refYear"] == rank_year]
+        df_view[df_view["refYear"] == rank_year]
         .groupby("Importer", as_index=False)["primaryValue"]
         .sum()
         .sort_values("primaryValue", ascending=False)
@@ -196,7 +209,7 @@ if view_mode == "Home (EU Comparison)":
 
     for country in ranking["Importer"]:
         series = (
-            df[df["Importer"] == country]
+            df_view[df_view["Importer"] == country]
             .groupby("refYear", as_index=False)["primaryValue"]
             .sum()
             .sort_values("refYear")
@@ -286,7 +299,7 @@ else:
 
     # -------- TIME SERIES --------
     country_sum = (
-        df[df["Importer"] == focus_country]
+        df_view[df_view["Importer"] == focus_country]
         .groupby("refYear", as_index=False)["primaryValue"]
         .sum()
     )
