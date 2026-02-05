@@ -282,7 +282,6 @@ if view_mode == "Home (EU Comparison)":
                 fig_cagr,
                 use_container_width=True,
                 config=EXPORT_CONFIG,
-                key="military_cagr_2013_2024"
             )
 # ================= COUNTRY =================
 else:
