@@ -164,25 +164,25 @@ if view_mode == "Home (EU Comparison)":
     # ----- CAGR CALCULATION -----
     if view_mode == "Home (EU Comparison)":
 
-    fig_rank = px.bar(
-        ranking,
-        x="Importer",
-        y="primaryValue",
-        labels={"primaryValue": "Trade Value (USD)"}
-    )
-    fig_rank.update_layout(
-        title=dict(
-            text=f"EU Ranking by Military Imports from Turkey ({rank_year})",
-            x=0.5,
-            xanchor="center",
-            font=dict(size=18)
+        fig_rank = px.bar(
+            ranking,
+            x="Importer",
+            y="primaryValue",
+            labels={"primaryValue": "Trade Value (USD)"}
         )
-    )
-    st.plotly_chart(
-        fig_rank,
-        use_container_width=True,
-        config=EXPORT_CONFIG
-    )
+        fig_rank.update_layout(
+            title=dict(
+                text=f"EU Ranking by Military Imports from Turkey ({rank_year})",
+                x=0.5,
+                xanchor="center",
+                font=dict(size=18)
+             )
+        )
+        st.plotly_chart(
+            fig_rank,
+            use_container_width=True,
+            config=EXPORT_CONFIG
+        )
 
     # ----- CAGR CALCULATION -----
     st.subheader("EU CAGR of Military Imports from Turkey (2013–2024)")
