@@ -78,13 +78,22 @@ if df.empty:
 # ================= HOME =================
 if view_mode == "Home (EU Comparison)":
 
-    # ===== RANKING =====
+    # ===== DATA FOR RANKING & CAGR =====
+    ranking = (
+        df[df["refYear"] == rank_year]
+        .groupby("Importer", as_index=False)["primaryValue"]
+        .sum()
+        .sort_values("primaryValue", ascending=False)
+    )
+
+    # ===== RANKING CHART =====
     fig_rank = px.bar(
         ranking,
         x="Importer",
         y="primaryValue",
         labels={"primaryValue": "Trade Value (USD)"}
     )
+
     fig_rank.update_layout(
         title=dict(
             text=f"EU Ranking by Military Imports from Turkey ({rank_year})",
@@ -101,7 +110,7 @@ if view_mode == "Home (EU Comparison)":
         key=f"military_rank_{rank_year}"
     )
 
-    # ===== CAGR =====
+    # ===== CAGR CALCULATION (2013–2024) =====
     st.subheader("EU CAGR of Military Imports from Turkey (2013–2024)")
 
     cagr_rows = []
@@ -166,7 +175,6 @@ if view_mode == "Home (EU Comparison)":
             config=EXPORT_CONFIG,
             key="military_cagr_2013_2024"
         )
-
 # ================= COUNTRY =================
 else:
     st.sidebar.header("Country View")
