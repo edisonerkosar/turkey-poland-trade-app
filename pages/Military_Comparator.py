@@ -77,7 +77,44 @@ if df.empty:
 
 # ================= HOME =================
 if view_mode == "Home (EU Comparison)":
+     # ===== EU-WIDE TREND OVER TIME =====
+    st.subheader("EU Comparison – Total Military Imports from Turkey")
 
+    home = (
+        df.groupby(["refYear", "Importer"], as_index=False)["primaryValue"]
+        .sum()
+    )
+
+    fig_trend = px.line(
+        home,
+        x="refYear",
+        y="primaryValue",
+        color="Importer",
+        labels={"primaryValue": "Trade Value (USD)", "refYear": "Year"}
+    )
+
+    for trace in fig_trend.data:
+        if trace.name == "Poland":
+            trace.update(line=dict(width=5))
+        else:
+            trace.update(line=dict(width=1, dash="dot"))
+
+    fig_trend.update_layout(
+        title=dict(
+            text="EU Comparison – Total Military Imports from Turkey (2013–2024)",
+            x=0.5,
+            xanchor="center",
+            font=dict(size=20)
+        ),
+        legend_title_text="EU Country"
+    )
+
+    st.plotly_chart(
+        fig_trend,
+        use_container_width=True,
+        config=EXPORT_CONFIG,
+        key="military_eu_trend"
+    )
     # ===== DATA FOR RANKING & CAGR =====
     rank_year = st.selectbox(
     "Ranking Year",
