@@ -212,7 +212,7 @@ if view_mode == "Home (EU Comparison)":
     # ===== CAGR CALCULATION (2013–2024) =====
     st.subheader("EU CAGR of Military Imports from Turkey (2013–2024)")
 
-    cagr_rows = []
+cagr_rows = []
 
 for country in selected_countries:
     series = (
