@@ -78,69 +78,7 @@ if df.empty:
 # ================= HOME =================
 if view_mode == "Home (EU Comparison)":
 
-    st.subheader("EU Comparison – Total Military Imports from Turkey")
-
-    home = (
-        df.groupby(["refYear", "Importer"], as_index=False)["primaryValue"]
-        .sum()
-    )
-
-    fig = px.line(
-        home,
-        x="refYear",
-        y="primaryValue",
-        color="Importer",
-        labels={"primaryValue": "Trade Value (USD)", "refYear": "Year"}
-    )
-    fig.update_layout(
-        title=dict(
-            text="EU Comparison – Total Military Imports from Turkey",
-            x=0.5,
-            xanchor="center",
-            font=dict(size=20)
-        )
-    )
-
-    for trace in fig.data:
-        if trace.name == "Poland":
-            trace.update(line=dict(width=5))
-        else:
-            trace.update(line=dict(width=1, dash="dot"))
-
-    fig.update_layout(
-        legend_title_text="EU Country",
-        yaxis_title="Trade Value (USD)",
-        xaxis=dict(
-            tickmode="array",
-            tickvals=ALL_YEARS,
-            ticktext=[str(y) for y in ALL_YEARS],
-            showgrid=True,
-            gridcolor="rgba(255,255,255,0.08)"
-        ),
-        yaxis=dict(showgrid=True, gridcolor="rgba(255,255,255,0.08)")
-    )
-
-    st.plotly_chart(
-        fig,
-        use_container_width=True,
-        config=EXPORT_CONFIG
-    )
-    # ----- RANKING -----
-    rank_year = st.selectbox(
-        "Ranking Year",
-        ALL_YEARS,
-        index=len(ALL_YEARS) - 1
-    )
-
-    st.subheader(f"EU Ranking by Military Imports from Turkey ({rank_year})")
-
-    ranking = (
-        df[df["refYear"] == rank_year]
-        .groupby("Importer", as_index=False)["primaryValue"]
-        .sum()
-        .sort_values("primaryValue", ascending=False)
-    )
-
+    # ===== RANKING =====
     fig_rank = px.bar(
         ranking,
         x="Importer",
@@ -156,31 +94,14 @@ if view_mode == "Home (EU Comparison)":
         )
     )
 
-    # ----- CAGR CALCULATION -----
-    if view_mode == "Home (EU Comparison)":
+    st.plotly_chart(
+        fig_rank,
+        use_container_width=True,
+        config=EXPORT_CONFIG,
+        key=f"military_rank_{rank_year}"
+    )
 
-        fig_rank = px.bar(
-            ranking,
-            x="Importer",
-            y="primaryValue",
-            labels={"primaryValue": "Trade Value (USD)"}
-        )
-        fig_rank.update_layout(
-            title=dict(
-                text=f"EU Ranking by Military Imports from Turkey ({rank_year})",
-                x=0.5,
-                xanchor="center",
-                font=dict(size=18)
-             )
-        )
-        st.plotly_chart(
-            fig_rank,
-            use_container_width=True,
-            config=EXPORT_CONFIG,
-            key="military_rank_2024"
-        )
-
-    # ----- CAGR CALCULATION -----
+    # ===== CAGR =====
     st.subheader("EU CAGR of Military Imports from Turkey (2013–2024)")
 
     cagr_rows = []
