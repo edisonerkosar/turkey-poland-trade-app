@@ -210,7 +210,18 @@ if view_mode == "Home (EU Comparison)":
                 font=dict(size=18)
             )
         )
+        fig_cagr.update_xaxes(
+            tickfont=dict(size=16),      # 👈 X-axis labels (countries)
+            title_font=dict(size=18)
+        )
 
+        fig_cagr.update_yaxes(
+            tickfont=dict(size=16),      # 👈 Y-axis values (CAGR %)
+            title_font=dict(size=18)
+        )
+        fig_cagr.update_layout(
+            title_font=dict(size=20)
+        )
         st.plotly_chart(
             fig_cagr,
             use_container_width=True,
