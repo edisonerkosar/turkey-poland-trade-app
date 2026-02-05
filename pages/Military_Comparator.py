@@ -212,78 +212,78 @@ if view_mode == "Home (EU Comparison)":
     # ===== CAGR CALCULATION (2013–2024) =====
     st.subheader("EU CAGR of Military Imports from Turkey (2013–2024)")
 
-cagr_rows = []
+    cagr_rows = []
 
-for country in selected_countries:
-    series = (
-        df_view_complete[df_view_complete["Importer"] == country]
-        .sort_values("refYear")
-    )
-
-    start_year = series.iloc[0]["refYear"]
-    end_year = series.iloc[-1]["refYear"]
-
-    start_val = series.iloc[0]["primaryValue"]
-    end_val = series.iloc[-1]["primaryValue"]
-
-    years = end_year - start_year
-
-    # If country starts at zero, CAGR is undefined → skip
-    if start_val <= 0 or years <= 0:
-        continue
-
-    cagr = ((end_val / start_val) ** (1 / years) - 1) * 100
-
-    cagr_rows.append({
-        "Importer": country,
-        "CAGR": cagr
-    })
-
-
-    cagr_df = pd.DataFrame(cagr_rows)
-
-    if not cagr_df.empty:
-        cagr_df = cagr_df.sort_values("CAGR", ascending=False)
-
-        fig_cagr = px.bar(
-            cagr_df,
-            x="Importer",
-            y="CAGR",
-            labels={"CAGR": "CAGR (%)"},
-            text="CAGR"
+    for country in selected_countries:
+        series = (
+            df_view_complete[df_view_complete["Importer"] == country]
+            .sort_values("refYear")
         )
 
-        fig_cagr.update_traces(
-            texttemplate="%{text:.1f}",
-            textposition="outside"
-        )
+        start_year = series.iloc[0]["refYear"]
+        end_year = series.iloc[-1]["refYear"]
 
-        fig_cagr.update_layout(
-            title=dict(
-                text="CAGR of EU Military Imports from Turkey (2013–2024)",
-                x=0.5,
-                xanchor="center",
-                font=dict(size=18)
+        start_val = series.iloc[0]["primaryValue"]
+        end_val = series.iloc[-1]["primaryValue"]
+
+        years = end_year - start_year
+
+        # If country starts at zero, CAGR is undefined → skip
+        if start_val <= 0 or years <= 0:
+            continue
+
+        cagr = ((end_val / start_val) ** (1 / years) - 1) * 100
+
+        cagr_rows.append({
+            "Importer": country,
+            "CAGR": cagr
+        })
+
+
+        cagr_df = pd.DataFrame(cagr_rows)
+
+        if not cagr_df.empty:
+            cagr_df = cagr_df.sort_values("CAGR", ascending=False)
+
+            fig_cagr = px.bar(
+                cagr_df,
+                x="Importer",
+                y="CAGR",
+                labels={"CAGR": "CAGR (%)"},
+                text="CAGR"
             )
-        )
-        fig_cagr.update_xaxes(
-            tickfont=dict(size=16),      # 👈 X-axis labels (countries)
-            title_font=dict(size=18)
-        )
 
-        fig_cagr.update_yaxes(
-            tickfont=dict(size=16),      # 👈 Y-axis values (CAGR %)
-            title_font=dict(size=18)
-        )
-        fig_cagr.update_layout(
-            title_font=dict(size=20)
-        )
-        st.plotly_chart(
-            fig_cagr,
-            use_container_width=True,
-            config=EXPORT_CONFIG,
-            key="military_cagr_2013_2024"
-        )
+            fig_cagr.update_traces(
+                texttemplate="%{text:.1f}",
+                textposition="outside"
+            )
+
+            fig_cagr.update_layout(
+                title=dict(
+                    text="CAGR of EU Military Imports from Turkey (2013–2024)",
+                    x=0.5,
+                    xanchor="center",
+                    font=dict(size=18)
+                )
+            )
+            fig_cagr.update_xaxes(
+                tickfont=dict(size=16),      # 👈 X-axis labels (countries)
+                title_font=dict(size=18)
+            )
+
+            fig_cagr.update_yaxes(
+                tickfont=dict(size=16),      # 👈 Y-axis values (CAGR %)
+                title_font=dict(size=18)
+            )
+            fig_cagr.update_layout(
+                title_font=dict(size=20)
+            )
+            st.plotly_chart(
+                fig_cagr,
+                use_container_width=True,
+                config=EXPORT_CONFIG,
+                key="military_cagr_2013_2024"
+            )
 # ================= COUNTRY =================
 else:
     st.sidebar.header("Country View")
