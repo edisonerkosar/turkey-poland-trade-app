@@ -61,7 +61,21 @@ view_mode = st.sidebar.radio(
     "View Mode",
     ["Home (EU Comparison)", "Country Focus"]
 )
+all_countries = sorted(df["Importer"].unique())
 
+selected_countries = st.sidebar.multiselect(
+    "Countries to display",
+    all_countries,
+    default=all_countries   # 👈 SHOW ALL BY DEFAULT
+)
+if not selected_countries:
+    st.warning("Please select at least one country to display.")
+    st.stop()
+home = (
+    df[df["Importer"].isin(selected_countries)]
+    .groupby(["refYear", "Importer"], as_index=False)["primaryValue"]
+    .sum()
+)
 hs_selected = st.sidebar.multiselect(
     "Select Military HS Codes",
     options=sorted(df["cmdCode"].unique()),
