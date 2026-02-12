@@ -354,18 +354,37 @@ fig = px.line(
 
 fig.update_layout(
     title=dict(
-        text=title_text,
+        text=f"<b>{title_text}</b>",
         x=0.5,
         xanchor="center",
+        font=dict(size=30, color="black")
     ),
-    yaxis_title="Trade Value (USD)",
+    yaxis=dict(
+        title=dict(
+            text="Trade Value (USD)",
+            font=dict(size=22, color="black")
+        ),
+        tickfont=dict(size=18, color="black"),
+        showgrid=True,
+        gridcolor="rgba(0,0,0,0.25)",
+        gridwidth=1.2
+    ),
     xaxis=dict(
+        title=dict(
+            text="Year",
+            font=dict(size=22, color="black")
+        ),
         tickmode="array",
         tickvals=all_years + (proj_years if show_projection else []),
-        ticktext=[str(y) for y in (all_years + (proj_years if show_projection else []))]
+        ticktext=[str(y) for y in (all_years + (proj_years if show_projection else []))],
+        tickfont=dict(size=18, color="black")
     ),
-    legend_title_text=""
+    legend=dict(
+        font=dict(size=18, color="black"),
+        title_font=dict(size=20, color="black")
+    )
 )
+
 
 st.plotly_chart(
         fig,
@@ -584,6 +603,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
