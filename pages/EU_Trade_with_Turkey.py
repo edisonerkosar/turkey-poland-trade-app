@@ -168,15 +168,6 @@ fig = px.line(
     labels={"Value": "Trade Value (USD)", "Year": "Year"}
 )
 
-fig.update_layout(
-    title=dict(
-        text=main_title,
-        x=0.5,
-        xanchor="center",
-        font=dict(size=20)
-    )
-)
-
 for trace in fig.data:
     if trace.name == "Poland":
         trace.update(line=dict(width=5))
@@ -184,9 +175,39 @@ for trace in fig.data:
         trace.update(line=dict(width=1, dash="dot"))
 
 fig.update_layout(
-    xaxis=dict(tickmode="array", tickvals=ALL_YEARS, showgrid=True),
-    yaxis_title="Trade Value (USD)",
-    legend_title_text="EU Country"
+    title=dict(
+        text=f"<b>{main_title}</b>",
+        x=0.5,
+        xanchor="center",
+        font=dict(size=30, color="black")
+    ),
+    xaxis=dict(
+        title=dict(
+            text="Year",
+            font=dict(size=22, color="black")
+        ),
+        tickmode="array",
+        tickvals=ALL_YEARS,
+        tickfont=dict(size=18, color="black"),
+        showgrid=True,
+        gridcolor="rgba(0,0,0,0.25)",
+        gridwidth=1.2
+    ),
+    yaxis=dict(
+        title=dict(
+            text="Trade Value (USD)",
+            font=dict(size=22, color="black")
+        ),
+        tickfont=dict(size=18, color="black"),
+        showgrid=True,
+        gridcolor="rgba(0,0,0,0.25)",
+        gridwidth=1.2
+    ),
+    legend=dict(
+        title=dict(text="EU Country"),
+        font=dict(size=18, color="black"),
+        title_font=dict(size=20, color="black")
+    )
 )
 
 st.plotly_chart(
@@ -234,10 +255,27 @@ else:
 
     fig_cagr.update_layout(
         title=dict(
-            text=cagr_title,
+            text=f"<b>{cagr_title}</b>",
             x=0.5,
             xanchor="center",
-            font=dict(size=18)
+            font=dict(size=28, color="black")
+        ),
+        xaxis=dict(
+            title=dict(
+                text="Country",
+                font=dict(size=22, color="black")
+            ),
+            tickfont=dict(size=18, color="black")
+        ),
+        yaxis=dict(
+            title=dict(
+                text="CAGR % (2013–2024)",
+                font=dict(size=22, color="black")
+            ),
+            tickfont=dict(size=18, color="black"),
+            showgrid=True,
+            gridcolor="rgba(0,0,0,0.25)",
+            gridwidth=1.2
         )
     )
     
@@ -290,14 +328,35 @@ else:
 
     fig_matrix.update_layout(
         title=dict(
-            text="Growth vs Size Matrix (EU–Turkey Trade)",
+            text="<b>Growth vs Size Matrix (EU–Turkey Trade)</b>",
             x=0.5,
             xanchor="center",
-            font=dict(size=18)
+            font=dict(size=28, color="black")
         ),
-        xaxis_title=f"Trade Volume in {latest_year} (USD)",
-        yaxis_title="CAGR % (2013–2024)",
-        legend_title_text="EU Country"
+        xaxis=dict(
+            title=dict(
+                text=f"Trade Volume in {latest_year} (USD)",
+                font=dict(size=22, color="black")
+            ),
+            tickfont=dict(size=18, color="black"),
+            showgrid=True,
+            gridcolor="rgba(0,0,0,0.25)",
+            gridwidth=1.2
+        ),
+        yaxis=dict(
+            title=dict(
+                text="CAGR % (2013–2024)",
+                font=dict(size=22, color="black")
+            ),
+            tickfont=dict(size=18, color="black"),
+            showgrid=True,
+            gridcolor="rgba(0,0,0,0.25)",
+            gridwidth=1.2
+        ),
+        legend=dict(
+            font=dict(size=18, color="black"),
+            title_font=dict(size=20, color="black")
+        )
     )
 
     fig_matrix.update_xaxes(type="log")
@@ -327,12 +386,35 @@ fig2 = px.line(
 
 fig2.update_layout(
     title=dict(
-        text=f"{focus_country} – Trade Over Time",
+        text=f"<b>{focus_country} – Trade Over Time</b>",
         x=0.5,
         xanchor="center",
-        font=dict(size=18)
+        font=dict(size=28, color="black")
+    ),
+    xaxis=dict(
+        title=dict(
+            text="Year",
+            font=dict(size=22, color="black")
+        ),
+        tickmode="array",
+        tickvals=ALL_YEARS,
+        tickfont=dict(size=18, color="black"),
+        showgrid=True,
+        gridcolor="rgba(0,0,0,0.25)",
+        gridwidth=1.2
+    ),
+    yaxis=dict(
+        title=dict(
+            text="Trade Value (USD)",
+            font=dict(size=22, color="black")
+        ),
+        tickfont=dict(size=18, color="black"),
+        showgrid=True,
+        gridcolor="rgba(0,0,0,0.25)",
+        gridwidth=1.2
     )
 )
+
 
 if compare_poland and focus_country != "Poland":
     poland_ts = (
