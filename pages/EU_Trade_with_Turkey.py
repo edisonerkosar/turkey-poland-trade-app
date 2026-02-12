@@ -37,6 +37,7 @@ pio.templates["thesis_white"].layout.update(
 )
 
 pio.templates.default = "thesis_white"
+
 EXPORT_CONFIG = {
     "displaylogo": False,
     "modeBarButtonsToAdd": ["toImage"],
@@ -45,7 +46,7 @@ EXPORT_CONFIG = {
         "filename": "trade_chart",
         "height": 800,
         "width": 1200,
-        "scale": 3
+        "scale": 4
     }
 }
 
