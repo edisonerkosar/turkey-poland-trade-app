@@ -170,9 +170,13 @@ fig = px.line(
 
 for trace in fig.data:
     if trace.name == "Poland":
-        trace.update(line=dict(width=5))
+        trace.update(
+            line=dict(width=5, dash="solid")
+        )
     else:
-        trace.update(line=dict(width=1, dash="dot"))
+        trace.update(
+            line=dict(width=3, dash="dash")
+        )
 
 fig.update_layout(
     title=dict(
