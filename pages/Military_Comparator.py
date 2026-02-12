@@ -419,14 +419,30 @@ else:
 
     fig.update_layout(
         xaxis=dict(
+            title=dict(
+                text="Year",
+                font=dict(size=22, color="black")
+            ),
             tickmode="array",
             tickvals=ALL_YEARS,
             ticktext=[str(y) for y in ALL_YEARS],
+            tickfont=dict(size=18, color="black"),
             showgrid=True,
-            gridcolor="rgba(255,255,255,0.08)"
+            gridcolor="rgba(0,0,0,0.25)",
+            gridwidth=1.2
         ),
-        yaxis=dict(showgrid=True, gridcolor="rgba(0,0,0,0.25)")
+        yaxis=dict(
+            title=dict(
+                text="Trade Value (USD)",
+                font=dict(size=22, color="black")
+            ),
+            tickfont=dict(size=18, color="black"),
+            showgrid=True,
+            gridcolor="rgba(0,0,0,0.25)",
+            gridwidth=1.2
+        )
     )
+
 
     st.plotly_chart(
         fig,
