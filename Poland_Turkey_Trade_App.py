@@ -12,34 +12,37 @@ pio.templates["thesis_white"] = pio.templates["plotly_white"]
 
 pio.templates["thesis_white"].layout.update(
     font=dict(
-        family="Arial",
+        family="Arial Black",
         size=18,
-        color="black"
+        color="#000000"
     ),
     title=dict(
-        font=dict(size=24, color="black")
+        font=dict(size=26, color="#000000")
     ),
     legend=dict(
-        font=dict(size=16, color="black"),
-        title_font=dict(size=18, color="black")
+        font=dict(size=18, color="#000000"),
+        title_font=dict(size=20, color="#000000")
     ),
     xaxis=dict(
-        title_font=dict(size=18, color="black"),
-        tickfont=dict(size=16, color="black"),
+        title_font=dict(size=20, color="#000000"),
+        tickfont=dict(size=18, color="#000000"),
         showgrid=True,
-        gridcolor="rgba(0,0,0,0.1)"
+        gridcolor="rgba(0,0,0,0.2)",
+        zerolinecolor="rgba(0,0,0,0.3)"
     ),
     yaxis=dict(
-        title_font=dict(size=18, color="black"),
-        tickfont=dict(size=16, color="black"),
+        title_font=dict(size=20, color="#000000"),
+        tickfont=dict(size=18, color="#000000"),
         showgrid=True,
-        gridcolor="rgba(0,0,0,0.15)"
+        gridcolor="rgba(0,0,0,0.2)",
+        zerolinecolor="rgba(0,0,0,0.3)"
     ),
     paper_bgcolor="white",
     plot_bgcolor="white"
 )
 
 pio.templates.default = "thesis_white"
+
 
 
 @st.cache_data(ttl=3600)
@@ -200,12 +203,12 @@ if selected == "Home":
 
     fig_default.update_layout(
         title=dict(
-            text=f"Top 10 {level} Categories in {latest_year}",
+            text=f"...",
             x=0.5,
-            xanchor="center",
-            font=dict(size=18)
+            xanchor="center"
         )
     )
+
     st.plotly_chart(
         fig_default,
         use_container_width=True,
@@ -327,10 +330,8 @@ fig.update_layout(
         text=title_text,
         x=0.5,
         xanchor="center",
-        font=dict(size=20)
     ),
     yaxis_title="Trade Value (USD)",
-    yaxis=dict(showgrid=True),
     xaxis=dict(
         showgrid=True,
         tickmode="array",
@@ -397,7 +398,7 @@ if selected == "Home":
     fig_pie.update_traces(
     text=pie_data["Display"],
     textinfo="text",
-    textfont=dict(size=20),          # 👈 INCREASE PERCENTAGE FONT SIZE
+    textfont=dict(size=22, color="black")         # 👈 INCREASE PERCENTAGE FONT SIZE
     hovertemplate=f"{level}: %{{label}}<br>%{{value:.2f}}%"
 )
     fig_pie.update_layout(
@@ -558,6 +559,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
