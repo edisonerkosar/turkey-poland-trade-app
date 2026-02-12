@@ -4,6 +4,12 @@ import plotly.express as px
 import os
 import itertools
 
+def format_share(x):
+    if x < 0.01:
+        return "<0.01%"
+    else:
+        return f"{x:.2f}%"
+        
 EXPORT_CONFIG = {
     "displaylogo": False,
     "modeBarButtonsToAdd": ["toImage"],
@@ -391,13 +397,7 @@ else:
             pie_focus["Share_%"] = (
                 pie_focus["primaryValue"] / pie_focus["primaryValue"].sum()
             ) * 100
-            def format_share(x):
-                if x < 0.01:
-                    return "<0.01%"
-            else:
-                return f"{x:.2f}%"
-
-pie_focus["Display"] = pie_focus["Share_%"].apply(format_share)
+            pie_focus["Display"] = pie_focus["Share_%"].apply(format_share)
             fig_pie = px.pie(
                 pie_focus,
                 names="cmdCode",
@@ -442,6 +442,12 @@ pie_focus["Display"] = pie_focus["Share_%"].apply(format_share)
             if pie_poland.empty:
                 st.info(f"No data for Poland in {pie_year}.")
             else:
+                pie_poland["Share_%"] = (
+                    pie_poland["primaryValue"] / pie_poland["primaryValue"].sum()
+                ) * 100
+
+                pie_poland["Display"] = pie_poland["Share_%"].apply(format_share)
+
                 fig_pie_pl = px.pie(
                     pie_poland,
                     names="cmdCode",
@@ -450,6 +456,7 @@ pie_focus["Display"] = pie_focus["Share_%"].apply(format_share)
                     color="cmdCode",
                     color_discrete_map=HS_COLORS
                 )
+
                 fig_pie_pl.update_layout(
                     title=dict(
                         text=f"Poland – Structure ({pie_year})",
@@ -458,19 +465,24 @@ pie_focus["Display"] = pie_focus["Share_%"].apply(format_share)
                         font=dict(size=16)
                     )
                 )
+
                 fig_pie_pl.update_traces(
+                    text=pie_poland["Display"],
+                    textinfo="text",
                     textfont=dict(size=18),
-                    hoverlabel=dict(font_size=16)
+                    hovertemplate="HS Code: %{label}<br>%{value:,.0f} USD"
                 )
 
                 fig_pie_pl.update_layout(
                     legend=dict(font=dict(size=16))
                 )
+
                 st.plotly_chart(
                     fig_pie_pl,
                     use_container_width=True,
                     config=EXPORT_CONFIG
-                )        
+                )
+   
 
     # -------- HS4 LEGEND --------
     st.markdown("#### HS Code Descriptions")
