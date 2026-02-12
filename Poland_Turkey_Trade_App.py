@@ -203,7 +203,7 @@ if selected == "Home":
 
     fig_default.update_layout(
         title=dict(
-            text=f"...",
+            text=f"Top 10 {level} Categories in {latest_year}",
             x=0.5,
             xanchor="center"
         )
@@ -333,7 +333,6 @@ fig.update_layout(
     ),
     yaxis_title="Trade Value (USD)",
     xaxis=dict(
-        showgrid=True,
         tickmode="array",
         tickvals=all_years + (proj_years if show_projection else []),
         ticktext=[str(y) for y in (all_years + (proj_years if show_projection else []))]
@@ -406,7 +405,6 @@ if selected == "Home":
         text=f"Category Share Structure in {pie_year}",
         x=0.5,
         xanchor="center",
-        font=dict(size=18)
     ),
     showlegend=False
 )
@@ -559,6 +557,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
