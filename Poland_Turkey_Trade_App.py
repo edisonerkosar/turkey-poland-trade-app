@@ -226,13 +226,29 @@ if selected == "Home":
             title_font=dict(size=20)
         )
     )
+    st.plotly_chart(
+        fig_default,
+        use_container_width=True,
+        config={
+            "displaylogo": False,
+            "modeBarButtonsToAdd": ["toImage"],
+            "toImageButtonOptions": {
+                "format": "svg",
+                "filename": "top10_trade",
+                "height": 800,
+                "width": 1200,
+                "scale": 4
+            }
+        }
+    )
+
 # ---- HS6 DESCRIPTIONS ----
 if selected == "Home":
 
     st.markdown("#### HS Code Descriptions")
 
     desc_source = options
-    codes = top10[level]
+    codes = top10[level].tolist()
 
     for c in codes:
         row = desc_source[desc_source[level] == c]
@@ -559,6 +575,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
