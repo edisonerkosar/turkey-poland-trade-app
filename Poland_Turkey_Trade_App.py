@@ -190,14 +190,14 @@ if selected == "Home":
 
     top10[level] = top10[level].astype(str)   # 👈 force text
 
-   fig_default = px.bar(
-    top10,
-    x=level,
-    y="Final_FOB_Value",
-    text_auto=".2s",
-    labels={"Final_FOB_Value": "Trade Value (USD)"},
-    category_orders={level: list(top10[level])}
-    )
+    fig_default = px.bar(
+        top10,
+        x=level,
+        y="Final_FOB_Value",
+        text_auto=".2s",
+        labels={"Final_FOB_Value": "Trade Value (USD)"},
+        category_orders={level: list(top10[level])}
+     )
 
     fig_default.update_xaxes(type="category")
 
@@ -559,6 +559,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
