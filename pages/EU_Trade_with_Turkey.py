@@ -326,9 +326,15 @@ else:
     # Highlight Poland
     for trace in fig_matrix.data:
         if trace.name == "Poland":
-            trace.update(marker=dict(size=22, line=dict(width=3, color="black")))
+            trace.update(
+                marker=dict(
+                    line=dict(width=3, color="black"),
+                    opacity=1
+                )
+            )
         else:
             trace.update(marker=dict(opacity=0.6))
+
 
     fig_matrix.update_layout(
         title=dict(
