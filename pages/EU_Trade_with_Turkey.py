@@ -3,7 +3,40 @@ import pandas as pd
 import plotly.express as px
 import os
 import numpy as np
+import plotly.io as pio
 
+pio.templates["thesis_white"] = pio.templates["plotly_white"]
+
+pio.templates["thesis_white"].layout.update(
+    font=dict(
+        family="Arial",
+        size=16,
+        color="black"
+    ),
+    title=dict(
+        font=dict(size=20, color="black")
+    ),
+    legend=dict(
+        font=dict(size=14, color="black"),
+        title_font=dict(size=16, color="black")
+    ),
+    xaxis=dict(
+        title_font=dict(size=16, color="black"),
+        tickfont=dict(size=14, color="black"),
+        showgrid=True,
+        gridcolor="rgba(0,0,0,0.1)"
+    ),
+    yaxis=dict(
+        title_font=dict(size=16, color="black"),
+        tickfont=dict(size=14, color="black"),
+        showgrid=True,
+        gridcolor="rgba(0,0,0,0.1)"
+    ),
+    paper_bgcolor="white",
+    plot_bgcolor="white"
+)
+
+pio.templates.default = "thesis_white"
 EXPORT_CONFIG = {
     "displaylogo": False,
     "modeBarButtonsToAdd": ["toImage"],
