@@ -190,40 +190,42 @@ if selected == "Home":
 
     top10[level] = top10[level].astype(str)   # 👈 force text
 
-    fig_default = px.bar(
-        top10,
-        x=level,
-        y="Final_FOB_Value",
-        text_auto=True,
-        labels={"Final_FOB_Value": "Trade Value (USD)"},
-        category_orders={level: list(top10[level])}
+   fig_default = px.bar(
+    top10,
+    x=level,
+    y="Final_FOB_Value",
+    text_auto=".2s",
+    labels={"Final_FOB_Value": "Trade Value (USD)"},
+    category_orders={level: list(top10[level])}
     )
 
     fig_default.update_xaxes(type="category")
 
-    fig_default.update_layout(
-        title=dict(
-            text=f"Top 10 {level} Categories in {latest_year}",
-            x=0.5,
-            xanchor="center"
-        )
+    fig_default.update_traces(
+        textposition="outside",
+        textfont=dict(size=20, color="black"),
+        marker_line_width=1.5,
+        marker_line_color="black"
     )
 
-    st.plotly_chart(
-        fig_default,
-        use_container_width=True,
-        config={
-            "displaylogo": False,
-            "modeBarButtonsToAdd": ["toImage"],
-            "toImageButtonOptions": {
-                "format": "svg",      # or "png"
-                "filename": "top10_trade" if selected == "Home" else f"{code}_{direction_key}_timeseries",
-                "height": 800,
-                "width": 1200,
-                "scale": 4
-        }
-    }
-)
+    fig_default.update_layout(
+        title=dict(
+            text=f"<b>Top 10 {level} Categories in {latest_year}</b>",
+            x=0.5,
+            xanchor="center"
+        ),
+        bargap=0.15,
+        height=750,
+        yaxis=dict(
+            showgrid=True,
+            gridcolor="rgba(0,0,0,0.25)",
+            gridwidth=1.2
+        ),
+        xaxis=dict(
+            tickfont=dict(size=18),
+            title_font=dict(size=20)
+        )
+    )
 # ---- HS6 DESCRIPTIONS ----
 if selected == "Home":
 
@@ -557,6 +559,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
