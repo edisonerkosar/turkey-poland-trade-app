@@ -166,44 +166,41 @@ if view_mode == "Home (EU Comparison)":
 
     for trace in fig_trend.data:
         if trace.name == "Poland":
-            trace.update(line=dict(width=5))
+            trace.update(line=dict(width=5, dash="solid"))
         else:
-            trace.update(line=dict(width=1, dash="dot"))
+            trace.update(line=dict(width=3, dash="dash"))
 
     fig_trend.update_layout(
         title=dict(
-            text="EU Comparison – Total Military Imports from Turkey",
+            text="<b>EU Comparison – Total Military Imports from Turkey</b>",
             x=0.5,
             xanchor="center",
-            font=dict(size=20)
+            font=dict(size=30, color="black")
         ),
         legend=dict(
-            title="EU Country",
-            font=dict(size=16),          # 👈 KEY FIX
-            title_font=dict(size=18)
+            title=dict(text="EU Country"),
+            font=dict(size=18, color="black"),
+            title_font=dict(size=20, color="black")
         ),
         xaxis=dict(
-            title="Year",
+            title=dict(text="Year", font=dict(size=22, color="black")),
             tickmode="array",
-            tickvals=ALL_YEARS,                     # 👈 FORCE all years 2013–2024
+            tickvals=ALL_YEARS,
             ticktext=[str(y) for y in ALL_YEARS],
-            tickangle=0,
+            tickfont=dict(size=18, color="black"),
             showgrid=True,
-            gridcolor="rgba(200,200,200,0.35)",     # 👈 visible vertical gridlines
-            gridwidth=1,
-            tickfont=dict(size=14),
-            title_font=dict(size=16)
+            gridcolor="rgba(0,0,0,0.25)",
+            gridwidth=1.2
         ),
-
         yaxis=dict(
-            title="Trade Value (USD)",
+            title=dict(text="Trade Value (USD)", font=dict(size=22, color="black")),
+            tickfont=dict(size=18, color="black"),
             showgrid=True,
-            gridcolor="rgba(200,200,200,0.35)",
-            gridwidth=1,
-            tickfont=dict(size=14),
-            title_font=dict(size=16)
+            gridcolor="rgba(0,0,0,0.25)",
+            gridwidth=1.2
         )
     )
+
 
 
     st.plotly_chart(
@@ -235,12 +232,24 @@ if view_mode == "Home (EU Comparison)":
 
     fig_rank.update_layout(
         title=dict(
-            text=f"EU Ranking by Military Imports from Turkey ({rank_year})",
+            text=f"<b>EU Ranking by Military Imports from Turkey ({rank_year})</b>",
             x=0.5,
             xanchor="center",
-            font=dict(size=18)
+            font=dict(size=28, color="black")
+        ),
+        xaxis=dict(
+            title=dict(text="EU Country", font=dict(size=22, color="black")),
+            tickfont=dict(size=18, color="black")
+        ),
+        yaxis=dict(
+            title=dict(text="Trade Value (USD)", font=dict(size=22, color="black")),
+            tickfont=dict(size=18, color="black"),
+            showgrid=True,
+            gridcolor="rgba(0,0,0,0.25)",
+            gridwidth=1.2
         )
     )
+
 
     st.plotly_chart(
         fig_rank,
@@ -364,15 +373,34 @@ else:
         y="primaryValue",
         labels={"primaryValue": "Trade Value (USD)", "refYear": "Year"}
     )
+    fig.update_traces(line=dict(width=4, dash="solid"))
 
     fig.update_layout(
         title=dict(
-            text=f"{focus_country} – Military Imports from Turkey",
+            text=f"<b>{focus_country} – Military Imports from Turkey</b>",
             x=0.5,
             xanchor="center",
-            font=dict(size=18)
+            font=dict(size=28, color="black")
+        ),
+        xaxis=dict(
+            title=dict(text="Year", font=dict(size=22, color="black")),
+            tickmode="array",
+            tickvals=ALL_YEARS,
+            ticktext=[str(y) for y in ALL_YEARS],
+            tickfont=dict(size=18, color="black"),
+            showgrid=True,
+            gridcolor="rgba(0,0,0,0.25)",
+            gridwidth=1.2
+        ),
+        yaxis=dict(
+            title=dict(text="Trade Value (USD)", font=dict(size=22, color="black")),
+            tickfont=dict(size=18, color="black"),
+            showgrid=True,
+            gridcolor="rgba(0,0,0,0.25)",
+            gridwidth=1.2
         )
     )
+
 
     if compare_poland and focus_country != "Poland":
         poland = (
@@ -397,7 +425,7 @@ else:
             showgrid=True,
             gridcolor="rgba(255,255,255,0.08)"
         ),
-        yaxis=dict(showgrid=True, gridcolor="rgba(255,255,255,0.08)")
+        yaxis=dict(showgrid=True, gridcolor="rgba(0,0,0,0.25)")
     )
 
     st.plotly_chart(
