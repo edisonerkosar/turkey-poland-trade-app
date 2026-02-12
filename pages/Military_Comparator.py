@@ -388,6 +388,16 @@ else:
         if pie_focus.empty:
             st.info(f"No data for {focus_country} in {pie_year}.")
         else:
+            pie_focus["Share_%"] = (
+                pie_focus["primaryValue"] / pie_focus["primaryValue"].sum()
+            ) * 100
+            def format_share(x):
+                if x < 0.01:
+                    return "<0.01%"
+            else:
+                return f"{x:.2f}%"
+
+pie_focus["Display"] = pie_focus["Share_%"].apply(format_share)
             fig_pie = px.pie(
                 pie_focus,
                 names="cmdCode",
@@ -405,8 +415,10 @@ else:
                 )
             )
             fig_pie.update_traces(
-                textfont=dict(size=18),          # percentages inside pie
-                hoverlabel=dict(font_size=16)    # hover text
+                text=pie_focus["Display"],
+                textinfo="text",
+                textfont=dict(size=18),
+                hovertemplate="HS Code: %{label}<br>%{value:,.0f} USD"
             )
 
             fig_pie.update_layout(
