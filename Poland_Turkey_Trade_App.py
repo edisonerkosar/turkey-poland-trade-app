@@ -13,27 +13,27 @@ pio.templates["thesis_white"] = pio.templates["plotly_white"]
 pio.templates["thesis_white"].layout.update(
     font=dict(
         family="Arial",
-        size=16,
+        size=18,
         color="black"
     ),
     title=dict(
-        font=dict(size=20, color="black")
+        font=dict(size=24, color="black")
     ),
     legend=dict(
-        font=dict(size=14, color="black"),
-        title_font=dict(size=16, color="black")
+        font=dict(size=16, color="black"),
+        title_font=dict(size=18, color="black")
     ),
     xaxis=dict(
-        title_font=dict(size=16, color="black"),
-        tickfont=dict(size=14, color="black"),
+        title_font=dict(size=18, color="black"),
+        tickfont=dict(size=16, color="black"),
         showgrid=True,
         gridcolor="rgba(0,0,0,0.1)"
     ),
     yaxis=dict(
-        title_font=dict(size=16, color="black"),
-        tickfont=dict(size=14, color="black"),
+        title_font=dict(size=18, color="black"),
+        tickfont=dict(size=16, color="black"),
         showgrid=True,
-        gridcolor="rgba(0,0,0,0.1)"
+        gridcolor="rgba(0,0,0,0.15)"
     ),
     paper_bgcolor="white",
     plot_bgcolor="white"
@@ -558,6 +558,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
