@@ -377,7 +377,10 @@ fig.update_layout(
         tickmode="array",
         tickvals=all_years + (proj_years if show_projection else []),
         ticktext=[str(y) for y in (all_years + (proj_years if show_projection else []))],
-        tickfont=dict(size=18, color="black")
+        tickfont=dict(size=18, color="black"),
+        showgrid=True,                      # 👈 restore vertical grid
+        gridcolor="rgba(0,0,0,0.25)",       # 👈 visible vertical lines
+        gridwidth=1.2
     ),
     legend=dict(
         font=dict(size=18, color="black"),
@@ -603,6 +606,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
