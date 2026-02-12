@@ -212,18 +212,27 @@ if selected == "Home":
         title=dict(
             text=f"<b>Top 10 {level} Categories in {latest_year}</b>",
             x=0.5,
-            xanchor="center"
+            xanchor="center",
+            font=dict(size=30, color="black")
         ),
         bargap=0.15,
         height=750,
         yaxis=dict(
+            title=dict(
+                text="Trade Value (USD)",
+                font=dict(size=22, color="black")
+            ),
+            tickfont=dict(size=18, color="black"),
             showgrid=True,
             gridcolor="rgba(0,0,0,0.25)",
             gridwidth=1.2
         ),
         xaxis=dict(
-            tickfont=dict(size=18),
-            title_font=dict(size=20)
+            title=dict(
+                text=level,
+                font=dict(size=22, color="black")
+            ),
+            tickfont=dict(size=18, color="black")
         )
     )
     st.plotly_chart(
@@ -575,6 +584,7 @@ https://comtradeplus.un.org/
 
 Data has been processed and harmonized by the author for analytical and visualization purposes.
 """)
+
 
 
 
